@@ -225,11 +225,14 @@
   }
   function shareLink() {
     var code = encodeState();
-    var url = location.origin + location.pathname + "#b=" + code;
-    var done = function () { SB.toast("Share link copied to clipboard!"); };
+    // Share the /api/share link: it unfurls with a generated OG preview of
+    // THIS bracket, then redirects whoever opens it into the maker.
+    var url = location.origin + "/api/share?s=" + code;
+    var done = function () { SB.toast("Share link copied — it previews your bracket!"); };
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(url).then(done, function () { prompt("Copy this link:", url); });
     } else { prompt("Copy this link:", url); }
+    // Keep the current page's own state in the hash so a reload restores it.
     if (history.replaceState) history.replaceState(null, "", "#b=" + code);
   }
 

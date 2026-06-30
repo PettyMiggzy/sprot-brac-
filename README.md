@@ -27,6 +27,7 @@ anywhere (GitHub Pages, Netlify, Vercel, S3, or any plain web server).
 ### Highlights
 - **Truly print-friendly** — dedicated `@media print` styles strip the chrome and render clean, low-ink brackets and tables. Hit *Print* on any tool.
 - **Interactive bracket maker** — full single-elimination logic with downstream pick invalidation, standard 1-vs-N seeding, presets (NBA / World Cup / March Madness 64), `localStorage` persistence, **shareable URLs** (state encoded in the link), and a self-contained **canvas PNG export**.
+- **Self-spreading share links** — the bracket maker's "Share" button returns a link that unfurls in iMessage/Discord/X with a generated **OG preview image of that exact bracket** (champion called out), then drops whoever opens it straight into the maker with the bracket loaded.
 - **Dark mode** — light/dark toggle in the header, remembered across visits, applied before first paint (no flash).
 - **Live data, gracefully** — `js/data.js` upgrades schedules from [TheSportsDB](https://www.thesportsdb.com) when reachable and silently falls back to bundled sample data otherwise, so nothing ever breaks offline.
 - **Team colors** — tasteful per-team color accents across standings, schedules, and exports (no copyrighted logos).
@@ -81,7 +82,10 @@ directory set to the project root.
 │   ├── raffle.html
 │   └── pickem.html
 ├── api/
-│   └── sports.js           # Vercel serverless proxy for all live league data
+│   ├── sports.js           # serverless proxy for all live league data
+│   ├── og.js               # @vercel/og — dynamic bracket preview image (edge)
+│   └── share.js            # shareable link w/ per-bracket OG meta + redirect
+├── package.json            # only @vercel/og (for the OG function); no build step
 ├── css/styles.css          # design system + dark theme + print styles
 ├── js/
 │   ├── main.js             # shared header/footer, nav, theme toggle, toast, reveal

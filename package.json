@@ -1,0 +1,13 @@
+{
+  "name": "sportsbrackets",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SportsBrackets.net — printable brackets, schedules, live playoff tracking. Static site + Vercel serverless functions.",
+  "type": "module",
+  "scripts": {
+    "dev": "python3 -m http.server 8000"
+  },
+  "dependencies": {
+    "@vercel/og": "^0.11.0"
+  }
+}
