@@ -65,29 +65,149 @@
     }
   };
 
-  /* ---------- Optional live fetch (TheSportsDB free tier) ----------
-     The free dev key "3" is intentionally public per TheSportsDB docs.
-     We only *enhance* the schedule when reachable; standings & all
-     layouts always work from SAMPLE so the site is never broken. */
-  var LEAGUE_IDS = { mlb: 4424, nba: 4387, nfl: 4391, ncaa: 4607 };
+  /* ====================================================================
+     LIVE DATA via the same-origin /api/sports proxy
+     --------------------------------------------------------------------
+     The proxy fronts MLB Stats API (keyless), ESPN hidden JSON (keyless),
+     and football-data.org (keyed). These public shapes are undocumented
+     and can change, so every mapper is defensive and returns null on any
+     mismatch — the page then keeps its SAMPLE data. Standings rows map to
+     [team, W, L, streakCode]; schedule rows to [date, matchup, time, tv].
+     ==================================================================== */
 
-  SB.fetchLiveSchedule = function (key) {
-    var id = LEAGUE_IDS[key];
-    if (!id || typeof fetch !== "function") return Promise.reject("unsupported");
-    var url = "https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=" + id;
+  function etTime(iso) {
+    try { return new Date(iso).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" }); }
+    catch (e) { return "TBD"; }
+  }
+  function etDate(iso) {
+    try { return new Date(iso).toLocaleDateString("en-US", { timeZone: "America/New_York", month: "short", day: "numeric" }); }
+    catch (e) { return "TBD"; }
+  }
+  function streakFromNum(n) {
+    if (n == null || isNaN(n)) return "—";
+    n = Number(n);
+    if (n === 0) return "—";
+    return (n > 0 ? "W" : "L") + Math.abs(n);
+  }
+  // Small broadcast map — TV networks aren't in these free feeds.
+  var TVMAP = { mlb: "MLB.TV", nba: "League Pass", nfl: "CBS / FOX", ncaa: "ESPN", global: "ESPN+" };
+  function tvFor(key, fallback) { return fallback || TVMAP[key] || "—"; }
+
+  function proxy(key, resource) {
+    if (typeof fetch !== "function") return Promise.reject("nofetch");
     var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
-    if (ctrl) setTimeout(function () { ctrl.abort(); }, 4000);
-    return fetch(url, ctrl ? { signal: ctrl.signal } : undefined)
-      .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
-      .then(function (j) {
-        var evs = (j && j.events) || [];
-        if (!evs.length) throw new Error("no events");
-        return evs.slice(0, 6).map(function (e) {
-          var date = (e.dateEvent || "").slice(5).replace("-", "/");
-          var match = (e.strEvent || (e.strHomeTeam + " vs " + e.strAwayTeam));
-          var time = (e.strTime || "").slice(0, 5) || "TBD";
-          return [date || "TBD", match, time + " UTC", e.strTVStation || "—"];
+    if (ctrl) setTimeout(function () { ctrl.abort(); }, 6000);
+    return fetch("/api/sports?league=" + key + "&resource=" + resource, ctrl ? { signal: ctrl.signal } : undefined)
+      .then(function (r) { if (!r.ok) throw new Error("proxy " + r.status); return r.json(); });
+  }
+
+  /* ---------- ESPN helpers (nba / nfl / global) ---------- */
+  function espnStatVal(stats, names) {
+    for (var i = 0; i < stats.length; i++) {
+      if (names.indexOf(stats[i].name) > -1 || names.indexOf(stats[i].type) > -1) return stats[i];
+    }
+    return null;
+  }
+  function espnStandings(json) {
+    // entries can live at top-level standings, or nested in children groups
+    var entries = [];
+    function collect(node) {
+      if (!node) return;
+      if (node.standings && node.standings.entries) entries = entries.concat(node.standings.entries);
+      if (node.children) node.children.forEach(collect);
+    }
+    collect(json);
+    if (json.standings && json.standings.entries && !entries.length) entries = json.standings.entries;
+    if (!entries.length) return null;
+
+    var rows = entries.map(function (e) {
+      var s = e.stats || [];
+      var w = espnStatVal(s, ["wins"]);
+      var l = espnStatVal(s, ["losses"]);
+      var pct = espnStatVal(s, ["winPercent"]);
+      var stk = espnStatVal(s, ["streak"]);
+      var name = (e.team && (e.team.shortDisplayName || e.team.displayName || e.team.name)) || "—";
+      var strk = stk ? (stk.displayValue || streakFromNum(stk.value)) : "—";
+      return { name: name, w: w ? Math.round(w.value) : 0, l: l ? Math.round(l.value) : 0, pct: pct ? pct.value : 0, strk: strk };
+    });
+    rows.sort(function (a, b) { return b.pct - a.pct; });
+    return rows.slice(0, 8).map(function (r) { return [r.name, r.w, r.l, r.strk]; });
+  }
+  function espnScoreboard(key, json) {
+    var events = json && json.events;
+    if (!Array.isArray(events) || !events.length) return null;
+    return events.slice(0, 8).map(function (ev) {
+      var comp = (ev.competitions && ev.competitions[0]) || {};
+      var cs = comp.competitors || [];
+      var home = cs.filter(function (c) { return c.homeAway === "home"; })[0];
+      var away = cs.filter(function (c) { return c.homeAway === "away"; })[0];
+      var matchup = (away && home)
+        ? (teamShort(away.team) + " @ " + teamShort(home.team))
+        : (ev.shortName || ev.name || "TBD");
+      var tv = "";
+      if (comp.broadcasts && comp.broadcasts[0] && comp.broadcasts[0].names) tv = comp.broadcasts[0].names[0];
+      return [etDate(ev.date), matchup, etTime(ev.date), tvFor(key, tv)];
+    });
+  }
+  function teamShort(t) { return (t && (t.abbreviation || t.shortDisplayName || t.displayName || t.name)) || "TBD"; }
+
+  /* ---------- MLB Stats API ---------- */
+  function mlbStandings(json) {
+    var recs = json && json.records;
+    if (!Array.isArray(recs) || !recs.length) return null;
+    var teams = [];
+    recs.forEach(function (div) {
+      (div.teamRecords || []).forEach(function (tr) {
+        teams.push({
+          name: (tr.team && tr.team.name) || "—",
+          w: tr.wins || 0, l: tr.losses || 0,
+          pct: parseFloat(tr.winningPercentage || "0") || (tr.wins / Math.max(1, tr.wins + tr.losses)),
+          strk: (tr.streak && tr.streak.streakCode) || "—"
         });
       });
+    });
+    if (!teams.length) return null;
+    teams.sort(function (a, b) { return b.pct - a.pct; });
+    return teams.slice(0, 8).map(function (t) { return [t.name, t.w, t.l, t.strk]; });
+  }
+  function mlbSchedule(json) {
+    var dates = json && json.dates;
+    if (!Array.isArray(dates) || !dates.length) return null;
+    var out = [];
+    dates.forEach(function (d) {
+      (d.games || []).forEach(function (g) {
+        if (out.length >= 8) return;
+        var away = g.teams && g.teams.away && g.teams.away.team;
+        var home = g.teams && g.teams.home && g.teams.home.team;
+        var tv = "";
+        if (g.broadcasts && g.broadcasts[0]) tv = g.broadcasts[0].name;
+        out.push([etDate(g.gameDate), ((away && away.name) || "TBD") + " @ " + ((home && home.name) || "TBD"), etTime(g.gameDate), tvFor("mlb", tv)]);
+      });
+    });
+    return out.length ? out : null;
+  }
+
+  /* ---------- NCAA rankings (AP poll) ---------- */
+  function ncaaRankings(json) {
+    var ranks = json && json.rankings && json.rankings[0] && json.rankings[0].ranks;
+    if (!Array.isArray(ranks) || !ranks.length) return null;
+    return ranks.slice(0, 8).map(function (r) {
+      var rec = (r.recordSummary || "0-0").split("-");
+      var name = (r.team && (r.team.nickname || r.team.location || r.team.name)) || "—";
+      return [name, parseInt(rec[0], 10) || 0, parseInt(rec[1], 10) || 0, "—"];
+    });
+  }
+
+  var STAND_MAP = { mlb: mlbStandings, nba: espnStandings, nfl: espnStandings, global: espnStandings, ncaa: ncaaRankings };
+
+  /* ---------- public: fetch + map a league for the schedules page ---------- */
+  SB.fetchLeagueData = function (key) {
+    var standP = proxy(key, "standings")
+      .then(function (j) { try { return STAND_MAP[key] ? STAND_MAP[key](j) : null; } catch (e) { return null; } })
+      .catch(function () { return null; });
+    var schedP = proxy(key, "schedule")
+      .then(function (j) { try { return key === "mlb" ? mlbSchedule(j) : espnScoreboard(key, j); } catch (e) { return null; } })
+      .catch(function () { return null; });
+    return Promise.all([standP, schedP]).then(function (r) { return { standings: r[0], sched: r[1] }; });
   };
 })();

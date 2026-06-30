@@ -80,10 +80,13 @@ directory set to the project root.
 │   ├── round-robin.html
 │   ├── raffle.html
 │   └── pickem.html
+├── api/
+│   └── sports.js           # Vercel serverless proxy for all live league data
 ├── css/styles.css          # design system + dark theme + print styles
 ├── js/
 │   ├── main.js             # shared header/footer, nav, theme toggle, toast, reveal
-│   ├── data.js             # team colors + sample data + live fetch w/ fallback
+│   ├── data.js             # team colors + sample data + proxy fetch & mappers
+│   ├── wc.js               # World Cup hub: live groups/schedule/bracket mapping
 │   └── bracket.js          # bracket engine, presets, share-link, PNG export
 ├── assets/                 # logo + favicon (SVG)
 ├── robots.txt · sitemap.xml · .nojekyll
@@ -105,10 +108,41 @@ in one place:
 
 ---
 
+## 📡 Live data (optional)
+
+The schedules and World Cup pages **upgrade to live data automatically** when a
+serverless proxy is available, and **fall back to bundled sample data** otherwise — so
+the site is never broken, online or off.
+
+### How it works
+- `api/sports.js` is a single **Vercel serverless function** that proxies every league
+  server-side (solving CORS and hiding keys), with edge caching
+  (`s-maxage=300, stale-while-revalidate=600`):
+
+  | League (tab) | Source | Key needed? |
+  | --- | --- | --- |
+  | MLB | MLB Stats API (`statsapi.mlb.com`) | No |
+  | NBA / NFL / NCAA / Global (NHL) | ESPN public JSON | No |
+  | World Cup 2026 | [football-data.org](https://www.football-data.org) v4 | **Yes** |
+
+- The pages call it same-origin, e.g. `fetch('/api/sports?league=nfl&resource=standings')`,
+  and `js/data.js` / `js/wc.js` map each provider's JSON into the table/bracket DOM.
+  Every mapper is defensive and returns `null` on any shape mismatch (these public
+  feeds are undocumented and can change) → the page keeps its sample data.
+
+### To enable live World Cup data
+1. Register a free key at <https://www.football-data.org/client/register>.
+2. In **Vercel → Project → Settings → Environment Variables**, add
+   `FOOTBALL_DATA_KEY = <your key>`.
+3. Redeploy. (Until then the WC page shows sample data and the proxy returns a clean
+   `503 {error:"no_key"}`.)
+
+> MLB and ESPN need **no key** — those tabs go live as soon as the function deploys.
+> Broadcast (TV) columns aren't in these free feeds, so they use a small manual map in `js/data.js`.
+
 ## 📝 Notes
 
-Standings, schedules, and bracket seedings shown on the site are **illustrative sample
-data** to demonstrate the layouts. Wire them to a live sports data API (e.g. ESPN,
-SportsDataIO, or TheSportsDB) to make them real-time.
+Until the live feeds are reachable, the standings, schedules, and bracket seedings shown
+are **illustrative sample data** to demonstrate the layouts.
 
 Built for fans, by fans. Print free, share freely. 🏀⚾🏈⚽

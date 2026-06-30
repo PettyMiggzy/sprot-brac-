@@ -36,7 +36,7 @@
 
         <div class="grid-2" style="align-items:start">
           <div>
-            <h3 style="font-size:1rem;margin-bottom:12px;color:var(--ink-soft)">Standings</h3>
+            <h3 style="font-size:1rem;margin-bottom:12px;color:var(--ink-soft);display:flex;align-items:center;gap:10px">Standings <span class="pill" id="standNote" style="font-weight:600">checking live feed…</span></h3>
             <div class="table-wrap">
               <table class="data">
                 <thead><tr><th>#</th><th>Team</th><th>W</th><th>L</th><th>PCT</th><th>Strk</th></tr></thead>
@@ -69,7 +69,8 @@
   <script src="js/data.js"></script>
   <script>
     var LEAGUES = SB.SAMPLE;
-    var liveCache = {}; // key -> live schedule rows once fetched
+    var standCache = {}; // key -> live standings rows
+    var schedCache = {}; // key -> live schedule rows
 
     var ORDER = [["mlb","MLB"],["nba","Basketball"],["nfl","NFL"],["ncaa","NCAA"],["global","Global"]];
     var tabs = document.getElementById("leagueTabs");
@@ -78,38 +79,51 @@
     }).join("");
 
     function teamCell(name) {
-      var c = SB.colorFor(name);
-      return '<td class="team" style="border-left:3px solid ' + c + '">' + name + '</td>';
+      return '<td class="team" style="border-left:3px solid ' + SB.colorFor(name) + '">' + name + '</td>';
+    }
+    function setNote(id, live) {
+      var note = document.getElementById(id);
+      if (!note) return;
+      note.textContent = live ? "Live" : "sample data";
+      note.className = "pill " + (live ? "live" : "");
     }
 
+    function renderStandings(rows, live) {
+      document.getElementById("standRows").innerHTML = rows.map(function (r, i) {
+        var pct = r[1] + r[2] > 0 ? (r[1] / (r[1] + r[2])).toFixed(3).replace(/^0/, "") : "—";
+        var strk = /^W/.test(r[3]) ? '<span class="pill win">' + r[3] + '</span>' : (/^L/.test(r[3]) ? '<span class="pill loss">' + r[3] + '</span>' : r[3]);
+        return '<tr><td>' + (i + 1) + '</td>' + teamCell(r[0]) + '<td>' + r[1] + '</td><td>' + r[2] + '</td><td>' + pct + '</td><td>' + strk + '</td></tr>';
+      }).join("");
+      setNote("standNote", live);
+    }
     function renderSched(rows, live) {
       document.getElementById("schedRows").innerHTML = rows.map(function (r) {
         return '<tr><td>' + r[0] + '</td>' + teamCell(r[1]) + '<td>' + r[2] + '</td><td>' + r[3] + '</td></tr>';
       }).join("");
-      var note = document.getElementById("liveNote");
-      if (note) {
-        note.textContent = live ? "● Live schedule via TheSportsDB" : "Sample schedule (live feed unavailable)";
-        note.className = "pill " + (live ? "live" : "");
-      }
+      setNote("liveNote", live);
     }
 
     function render(key) {
       var L = LEAGUES[key];
       document.getElementById("leagueTitle").textContent = L.title;
       document.getElementById("leagueSub").textContent = L.sub;
-      document.getElementById("standRows").innerHTML = L.stand.map(function (r, i) {
-        var pct = r[1] + r[2] > 0 ? (r[1] / (r[1] + r[2])).toFixed(3).replace(/^0/, "") : "—";
-        var strk = /^W/.test(r[3]) ? '<span class="pill win">' + r[3] + '</span>' : (/^L/.test(r[3]) ? '<span class="pill loss">' + r[3] + '</span>' : r[3]);
-        return '<tr><td>' + (i + 1) + '</td>' + teamCell(r[0]) + '<td>' + r[1] + '</td><td>' + r[2] + '</td><td>' + pct + '</td><td>' + strk + '</td></tr>';
-      }).join("");
 
-      // schedule: prefer cached live, else sample, then try to upgrade
-      renderSched(liveCache[key] || L.sched, !!liveCache[key]);
-      if (!liveCache[key] && SB.fetchLiveSchedule) {
-        SB.fetchLiveSchedule(key).then(function (rows) {
-          liveCache[key] = rows;
-          if (currentKey === key) renderSched(rows, true);
-        }).catch(function () { /* keep sample silently */ });
+      // Render cached-live if we have it, else sample.
+      renderStandings(standCache[key] || L.stand, !!standCache[key]);
+      renderSched(schedCache[key] || L.sched, !!schedCache[key]);
+
+      // Try to upgrade to live data (once per key).
+      if ((!standCache[key] || !schedCache[key]) && SB.fetchLeagueData) {
+        if (!standCache[key]) document.getElementById("standNote").textContent = "checking live feed…";
+        if (!schedCache[key]) document.getElementById("liveNote").textContent = "checking live feed…";
+        SB.fetchLeagueData(key).then(function (data) {
+          if (data.standings && data.standings.length) standCache[key] = data.standings;
+          if (data.sched && data.sched.length) schedCache[key] = data.sched;
+          if (currentKey === key) {
+            renderStandings(standCache[key] || L.stand, !!standCache[key]);
+            renderSched(schedCache[key] || L.sched, !!schedCache[key]);
+          }
+        });
       }
 
       Array.prototype.forEach.call(tabs.children, function (b) {
