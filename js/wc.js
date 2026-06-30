@@ -193,11 +193,14 @@
     var hasKO = KO_ORDER.some(function (s) { return byStage[s].length; });
     if (!hasKO) return false;
 
-    function slot(team, win) {
+    function slot(team, win, score) {
       var name = teamName(team);
       var cls = "slot" + (name === "TBD" ? " empty" : "") + (win ? " picked" : "");
-      return '<div class="' + cls + '"><span class="nm">' + name + '</span></div>';
+      var sc = (score != null && name !== "TBD") ? '<span class="bk-score">' + score + '</span>' : "";
+      return '<div class="' + cls + '"><span class="nm">' + name + '</span>' + sc + '</div>';
     }
+    function isLive(m) { return m.status === "IN_PLAY" || m.status === "PAUSED" || m.status === "LIVE"; }
+
     var html = "";
     KO_ORDER.forEach(function (stage) {
       var games = byStage[stage];
@@ -211,8 +214,10 @@
       }
       var matches3 = games.map(function (m) {
         var w = m.score && m.score.winner;
-        return '<div class="match">' +
-          slot(m.homeTeam, w === "HOME_TEAM") + slot(m.awayTeam, w === "AWAY_TEAM") + '</div>';
+        var ft = m.score && m.score.fullTime;
+        var hs = ft ? ft.home : null, as = ft ? ft.away : null;
+        return '<div class="match' + (isLive(m) ? " live" : "") + '">' +
+          slot(m.homeTeam, w === "HOME_TEAM", hs) + slot(m.awayTeam, w === "AWAY_TEAM", as) + '</div>';
       }).join("");
       html += '<div class="round"><div class="round-title">' + STAGE_LABEL[stage] + '</div>' + matches3 + '</div>';
     });
@@ -242,18 +247,11 @@
   }
 
   /* ====================================================================
-     BOOT
+     LIVE LOADER — fetches standings + matches and upgrades the page.
+     As real results come in, the bracket auto-advances winners and the
+     champion resolves itself. Re-run on an interval to stay live.
      ==================================================================== */
-  document.addEventListener("DOMContentLoaded", function () {
-    // 1) Always render the sample data first.
-    renderGroups(Object.keys(SAMPLE_GROUPS).map(function (name) {
-      return { name: name, rows: SAMPLE_GROUPS[name] };
-    }));
-    renderSchedule(SAMPLE_SCHED);
-    renderSampleBracket();
-    setStatus("checking");
-
-    // 2) Try to upgrade to live data (silently keeps sample on any failure).
+  function loadLive() {
     var gotLive = false;
 
     var pStand = fetchResource("standings").then(function (d) {
@@ -269,8 +267,33 @@
       if (d && mapBracket(d.matches)) gotLive = true;
     }).catch(function () { /* keep sample */ });
 
-    Promise.all([pStand, pMatch]).then(function () {
+    return Promise.all([pStand, pMatch]).then(function () {
       setStatus(gotLive ? "live" : "sample");
+      return gotLive;
+    });
+  }
+
+  /* ====================================================================
+     BOOT
+     ==================================================================== */
+  var REFRESH_MS = 60000; // auto-refresh once a minute while the tab is open
+  document.addEventListener("DOMContentLoaded", function () {
+    // 1) Always render the sample data first so the page is complete.
+    renderGroups(Object.keys(SAMPLE_GROUPS).map(function (name) {
+      return { name: name, rows: SAMPLE_GROUPS[name] };
+    }));
+    renderSchedule(SAMPLE_SCHED);
+    renderSampleBracket();
+    setStatus("checking");
+
+    // 2) Upgrade to live data now, then keep it fresh.
+    loadLive();
+    setInterval(function () {
+      if (!document.hidden) loadLive();
+    }, REFRESH_MS);
+    // Refresh immediately when the user returns to the tab.
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden) loadLive();
     });
   });
 })();

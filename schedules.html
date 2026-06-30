@@ -140,6 +140,20 @@
     var initial = (location.hash || "").replace("#", "");
     currentKey = LEAGUES[initial] ? initial : "mlb";
     render(currentKey);
+
+    // Keep live data fresh: re-fetch the active league every 60s (bypassing cache).
+    function refreshLive(key) {
+      if (!SB.fetchLeagueData) return;
+      SB.fetchLeagueData(key).then(function (data) {
+        if (data.standings && data.standings.length) standCache[key] = data.standings;
+        if (data.sched && data.sched.length) schedCache[key] = data.sched;
+        if (currentKey === key) {
+          renderStandings(standCache[key] || LEAGUES[key].stand, !!standCache[key]);
+          renderSched(schedCache[key] || LEAGUES[key].sched, !!schedCache[key]);
+        }
+      });
+    }
+    setInterval(function () { if (!document.hidden) refreshLive(currentKey); }, 60000);
   </script>
 </body>
 </html>

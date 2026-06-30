@@ -345,6 +345,15 @@ table.data .pill { display: inline-block; padding: 2px 8px; border-radius: 6px; 
 .slot .nm { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .slot.empty { color: var(--ink-mute); font-style: italic; cursor: default; border-style: dashed; }
 .slot.empty:hover { border-color: var(--line); background: #fff; }
+.slot .bk-score { margin-left: auto; font-weight: 800; font-size: .82rem; color: var(--ink); background: var(--line-soft); border-radius: 5px; padding: 1px 7px; }
+.slot.picked .bk-score { background: rgba(47,109,246,.16); color: var(--accent-dk); }
+.match.live::after {
+  content: "● LIVE"; position: absolute; top: -9px; right: 6px; z-index: 1;
+  background: var(--danger); color: #fff; font-size: .58rem; font-weight: 800;
+  letter-spacing: .05em; padding: 1px 6px; border-radius: 5px;
+  animation: bk-pulse 1.4s ease-in-out infinite;
+}
+@keyframes bk-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
 .champion-box { text-align: center; padding: 16px; border: 2px solid var(--accent-3); border-radius: var(--radius); background: rgba(245,158,11,.08); }
 .champion-box .lbl { font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; color: var(--accent-3); font-weight: 800; }
 .champion-box .nm { font-size: 1.3rem; font-weight: 800; margin-top: 4px; }
