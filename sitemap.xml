@@ -5,5 +5,8 @@
   <url><loc>https://sportsbrackets.net/schedules.html</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
   <url><loc>https://sportsbrackets.net/play/bracket-maker.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://sportsbrackets.net/play/squares.html</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://sportsbrackets.net/play/round-robin.html</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://sportsbrackets.net/play/raffle.html</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://sportsbrackets.net/play/pickem.html</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://sportsbrackets.net/blog.html</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
 </urlset>

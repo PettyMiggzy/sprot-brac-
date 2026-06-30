@@ -6,6 +6,14 @@
 (function () {
   "use strict";
 
+  // ---- Theme: apply immediately to avoid flash ----
+  var THEME_KEY = "sb.theme";
+  function applyTheme(t) {
+    if (t === "dark") document.documentElement.setAttribute("data-theme", "dark");
+    else document.documentElement.removeAttribute("data-theme");
+  }
+  try { applyTheme(localStorage.getItem(THEME_KEY)); } catch (e) {}
+
   // Resolve relative root depth (pages in /play/ need ../)
   var depth = (location.pathname.match(/\//g) || []).length;
   var inSub = /\/play\//.test(location.pathname);
@@ -39,6 +47,10 @@
       '<a class="brand" href="' + ROOT + 'index.html">' + LOGO + 'Sports<b>Brackets</b></a>' +
       '<nav class="nav-links" id="navLinks">' + links + '</nav>' +
       '<div class="nav-cta">' +
+      '<button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle theme">' +
+      '<svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M19 5l-1.5 1.5M6.5 17.5 5 19" stroke-linecap="round"/></svg>' +
+      '<svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" stroke-linejoin="round"/></svg>' +
+      '</button>' +
       '<a class="btn btn--primary btn--sm" href="' + ROOT + 'play/bracket-maker.html">Build a Bracket</a>' +
       '<button class="nav-toggle" id="navToggle" aria-label="Menu">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>' +
@@ -48,7 +60,7 @@
   function buildFooter() {
     var cols = [
       { h: "Schedules", links: [["MLB", "schedules.html#mlb"], ["NBA / WNBA", "schedules.html#nba"], ["NFL", "schedules.html#nfl"], ["NCAA", "schedules.html#ncaa"]] },
-      { h: "Play", links: [["Bracket Maker", "play/bracket-maker.html"], ["Super Bowl Squares", "play/squares.html"], ["World Cup 2026", "world-cup-2026.html"], ["Blog", "blog.html"]] },
+      { h: "Play", links: [["Bracket Maker", "play/bracket-maker.html"], ["Super Bowl Squares", "play/squares.html"], ["Round-Robin", "play/round-robin.html"], ["Raffle &amp; Bingo", "play/raffle.html"], ["Pick'em Sheet", "play/pickem.html"]] },
       { h: "Company", links: [["About", "index.html#about"], ["Newsletter", "index.html#newsletter"], ["Privacy", "#"], ["Contact", "mailto:hello@sportsbrackets.net"]] }
     ];
     var colHtml = cols.map(function (c) {
@@ -82,6 +94,16 @@
     var f = document.querySelector('[data-mount="footer"]');
     if (h) h.outerHTML = buildHeader();
     if (f) f.outerHTML = buildFooter();
+
+    var themeBtn = document.getElementById("themeToggle");
+    if (themeBtn) {
+      themeBtn.addEventListener("click", function () {
+        var dark = document.documentElement.getAttribute("data-theme") === "dark";
+        var next = dark ? "light" : "dark";
+        applyTheme(next);
+        try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+      });
+    }
 
     var toggle = document.getElementById("navToggle");
     var links = document.getElementById("navLinks");

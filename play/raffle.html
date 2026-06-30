@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Raffle Picker &amp; Bingo Generator — Free | Sports Brackets</title>
+  <meta name="description" content="Free random raffle / prize picker and printable 5×5 bingo card generator for watch parties, fundraisers, and tailgates." />
+  <link rel="canonical" href="https://sportsbrackets.net/play/raffle.html" />
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    .winner-stage { text-align:center; padding:40px 20px; border:2px dashed var(--line); border-radius:var(--radius); background:var(--bg-alt); }
+    .winner-name { font-size:clamp(1.8rem,6vw,3rem); font-weight:900; letter-spacing:-.03em; color:var(--accent); min-height:1.2em; }
+    .bingo-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; max-width:460px; }
+    .bingo-grid .cell { aspect-ratio:1; border:1.5px solid var(--line); border-radius:8px; display:grid; place-items:center; font-weight:700; font-size:1.1rem; background:#fff; }
+    [data-theme="dark"] .bingo-grid .cell { background:var(--bg-alt); }
+    .bingo-grid .cell.free { background:rgba(245,158,11,.14); border-color:var(--accent-3); color:var(--accent-3); font-size:.8rem; }
+    .bingo-grid .head { aspect-ratio:auto; padding:8px 0; background:var(--accent); color:#fff; font-size:1.2rem; border-color:var(--accent); }
+  </style>
+</head>
+<body data-page="play">
+  <div data-mount="header"></div>
+
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="crumbs"><a href="../index.html">Home</a> / Play / Raffle &amp; Bingo</div>
+      <span class="eyebrow">Free · Watch-party ready</span>
+      <h1>Raffle &amp; Bingo</h1>
+      <p>Draw a random winner for prizes and giveaways, or print classic 5×5 bingo cards for the watch party.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="tabs" id="modeTabs">
+        <button class="active" data-mode="raffle">🎟️ Raffle Picker</button>
+        <button data-mode="bingo">🔢 Bingo Cards</button>
+      </div>
+
+      <!-- RAFFLE -->
+      <div id="rafflePane">
+        <div class="tool-shell">
+          <aside class="panel">
+            <h3>Entrants</h3>
+            <div class="field">
+              <label for="entries">One name per line</label>
+              <textarea id="entries" spellcheck="false">Alex
+Sam
+Jordan
+Casey
+Taylor
+Morgan
+Riley
+Jamie</textarea>
+            </div>
+            <div class="field">
+              <label><input type="checkbox" id="removeWin" /> Remove winner after each draw</label>
+            </div>
+            <button class="btn btn--primary" style="width:100%" id="drawBtn">🎲 Draw a winner</button>
+          </aside>
+          <div>
+            <div class="winner-stage">
+              <p class="muted" style="text-transform:uppercase;letter-spacing:.1em;font-size:.8rem;font-weight:700">And the winner is…</p>
+              <div class="winner-name" id="winner">—</div>
+              <p class="muted" id="entryCount"></p>
+            </div>
+            <div id="history" style="margin-top:20px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BINGO -->
+      <div id="bingoPane" style="display:none">
+        <div class="tool-shell">
+          <aside class="panel">
+            <h3>Bingo cards</h3>
+            <div class="field">
+              <label for="cardCount">Number of cards</label>
+              <input id="cardCount" type="number" min="1" max="30" value="2" />
+            </div>
+            <p class="hint">Standard 1–75 number bingo with a FREE center space. Generate, then print one per player.</p>
+            <button class="btn btn--primary" style="width:100%;margin-bottom:8px" id="bingoBtn">Generate cards</button>
+            <button class="btn btn--ghost btn--sm" style="width:100%" id="printBtn">🖨️ Print cards</button>
+          </aside>
+          <div id="cards" style="display:grid;gap:24px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div data-mount="footer"></div>
+
+  <script src="../js/main.js"></script>
+  <script>
+    var $ = function (id) { return document.getElementById(id); };
+    function rand(n) { return Math.floor(Math.random() * n); }
+
+    /* ---- Tabs ---- */
+    $("modeTabs").addEventListener("click", function (e) {
+      if (e.target.tagName !== "BUTTON") return;
+      var mode = e.target.getAttribute("data-mode");
+      Array.prototype.forEach.call($("modeTabs").children, function (b) { b.classList.toggle("active", b === e.target); });
+      $("rafflePane").style.display = mode === "raffle" ? "" : "none";
+      $("bingoPane").style.display = mode === "bingo" ? "" : "none";
+    });
+
+    /* ---- Raffle ---- */
+    var wins = [];
+    function entrants() { return $("entries").value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean); }
+    function updateCount() { $("entryCount").textContent = entrants().length + " entrants in the hat"; }
+
+    function draw() {
+      var list = entrants();
+      if (!list.length) { SB.toast("Add some entrants first."); return; }
+      var el = $("winner"), ticks = 0, max = 16;
+      var spin = setInterval(function () {
+        el.textContent = list[rand(list.length)];
+        if (++ticks >= max) {
+          clearInterval(spin);
+          var winner = list[rand(list.length)];
+          el.textContent = winner;
+          wins.unshift(winner);
+          renderHistory();
+          if ($("removeWin").checked) {
+            var lines = $("entries").value.split("\n");
+            var idx = lines.findIndex(function (l) { return l.trim() === winner; });
+            if (idx > -1) { lines.splice(idx, 1); $("entries").value = lines.join("\n"); updateCount(); }
+          }
+          SB.toast("🎉 " + winner + " wins!");
+        }
+      }, 70);
+    }
+    function renderHistory() {
+      if (!wins.length) { $("history").innerHTML = ""; return; }
+      $("history").innerHTML = '<h3 style="font-size:1rem;margin-bottom:10px">Winners</h3>' +
+        '<div class="links" style="display:flex;flex-wrap:wrap;gap:8px">' +
+        wins.map(function (w, i) { return '<span class="pill win">#' + (wins.length - i) + ' ' + w + '</span>'; }).join("") + '</div>';
+    }
+    $("drawBtn").addEventListener("click", draw);
+    $("entries").addEventListener("input", updateCount);
+    updateCount();
+
+    /* ---- Bingo ---- */
+    function colNums(lo, hi, count) {
+      var pool = [];
+      for (var n = lo; n <= hi; n++) pool.push(n);
+      for (var i = pool.length - 1; i > 0; i--) { var j = rand(i + 1); var t = pool[i]; pool[i] = pool[j]; pool[j] = t; }
+      return pool.slice(0, count);
+    }
+    function card() {
+      var ranges = [[1,15],[16,30],[31,45],[46,60],[61,75]];
+      var cols = ranges.map(function (r) { return colNums(r[0], r[1], 5); });
+      var html = '<div class="bingo-grid">';
+      "BINGO".split("").forEach(function (ch) { html += '<div class="cell head">' + ch + '</div>'; });
+      for (var row = 0; row < 5; row++) {
+        for (var col = 0; col < 5; col++) {
+          if (row === 2 && col === 2) html += '<div class="cell free">FREE</div>';
+          else html += '<div class="cell">' + cols[col][row] + '</div>';
+        }
+      }
+      return html + '</div>';
+    }
+    function genBingo() {
+      var n = Math.max(1, Math.min(30, parseInt($("cardCount").value, 10) || 1));
+      var out = "";
+      for (var i = 0; i < n; i++) out += '<div><strong style="display:block;margin-bottom:8px">Card ' + (i + 1) + '</strong>' + card() + '</div>';
+      $("cards").innerHTML = out;
+    }
+    $("bingoBtn").addEventListener("click", genBingo);
+    $("printBtn").addEventListener("click", function () { window.print(); });
+    genBingo();
+  </script>
+</body>
+</html>

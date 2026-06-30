@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Round-Robin Schedule Generator — Free &amp; Printable | Sports Brackets</title>
+  <meta name="description" content="Generate a complete round-robin schedule where every team plays every other team. Single or double round-robin, balanced rounds, printer-friendly." />
+  <link rel="canonical" href="https://sportsbrackets.net/play/round-robin.html" />
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body data-page="play">
+  <div data-mount="header"></div>
+
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="crumbs"><a href="../index.html">Home</a> / Play / Round-Robin</div>
+      <span class="eyebrow">Free · Every team plays everyone</span>
+      <h1>Round-Robin Generator</h1>
+      <p>Build a balanced schedule where every team faces every other team. Perfect for league play, group stages, and gym-night tournaments.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="tool-shell">
+        <aside class="panel">
+          <h3>Setup</h3>
+          <div class="field">
+            <label for="teams">Teams / players (one per line)</label>
+            <textarea id="teams" spellcheck="false">Lions
+Tigers
+Bears
+Hawks
+Sharks
+Wolves</textarea>
+            <p class="hint">An odd number adds a rotating “BYE”.</p>
+          </div>
+          <div class="field">
+            <label for="mode">Format</label>
+            <select id="mode">
+              <option value="1">Single round-robin</option>
+              <option value="2">Double (home &amp; away)</option>
+            </select>
+          </div>
+          <button class="btn btn--primary" style="width:100%;margin-bottom:8px" id="genBtn">Generate schedule</button>
+          <button class="btn btn--ghost btn--sm" style="width:100%" id="printBtn">🖨️ Print</button>
+        </aside>
+
+        <div>
+          <div class="toolbar">
+            <strong style="font-size:1.15rem" id="summary">Schedule</strong>
+          </div>
+          <div id="rounds"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div data-mount="footer"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/data.js"></script>
+  <script>
+    var $ = function (id) { return document.getElementById(id); };
+
+    // Circle method: fix team 0, rotate the rest.
+    function schedule(teams) {
+      var t = teams.slice();
+      if (t.length % 2) t.push("BYE");
+      var n = t.length, rounds = [];
+      for (var r = 0; r < n - 1; r++) {
+        var pairs = [];
+        for (var i = 0; i < n / 2; i++) {
+          var a = t[i], b = t[n - 1 - i];
+          if (a !== "BYE" && b !== "BYE") pairs.push([a, b]);
+          else pairs.push([a === "BYE" ? b : a, "BYE"]);
+        }
+        rounds.push(pairs);
+        // rotate: keep first fixed, move last into position 1
+        t.splice(1, 0, t.pop());
+      }
+      return rounds;
+    }
+
+    function render() {
+      var teams = $("teams").value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean);
+      if (teams.length < 2) { SB.toast("Add at least 2 teams."); return; }
+      var rounds = schedule(teams);
+      var doubled = $("mode").value === "2";
+      if (doubled) {
+        var second = rounds.map(function (rd) { return rd.map(function (p) { return [p[1], p[0]]; }); });
+        rounds = rounds.concat(second);
+      }
+      var games = rounds.reduce(function (a, rd) { return a + rd.filter(function (p) { return p[1] !== "BYE"; }).length; }, 0);
+      $("summary").textContent = teams.length + " teams · " + rounds.length + " rounds · " + games + " games";
+
+      $("rounds").innerHTML = rounds.map(function (rd, i) {
+        var rows = rd.map(function (p) {
+          if (p[1] === "BYE") return '<tr><td class="team" style="border-left:3px solid ' + SB.colorFor(p[0]) + '">' + p[0] + '</td><td class="muted">BYE</td></tr>';
+          return '<tr><td class="team" style="border-left:3px solid ' + SB.colorFor(p[0]) + '">' + p[0] +
+            '</td><td class="team" style="border-left:3px solid ' + SB.colorFor(p[1]) + '">vs ' + p[1] + '</td></tr>';
+        }).join("");
+        return '<div class="table-wrap" style="margin-bottom:16px"><table class="data"><thead><tr>' +
+          '<th colspan="2" style="color:var(--accent)">Round ' + (i + 1) + '</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+      }).join("");
+    }
+
+    $("genBtn").addEventListener("click", render);
+    $("printBtn").addEventListener("click", function () { window.print(); });
+    render();
+  </script>
+</body>
+</html>

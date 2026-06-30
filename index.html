@@ -13,6 +13,26 @@
   <meta property="og:title" content="Sports Brackets — Brackets, Schedules & Live Playoff Tracking" />
   <meta property="og:description" content="Printable brackets, master schedules, and real-time standings for every league that matters." />
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://sportsbrackets.net/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="canonical" href="https://sportsbrackets.net/" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Sports Brackets",
+    "url": "https://sportsbrackets.net/",
+    "description": "Low-ink, printer-friendly tournament brackets, master broadcast schedules, and real-time playoff tracking.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://sportsbrackets.net/schedules.html#{search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  <!-- Privacy-friendly analytics: uncomment after registering the domain at plausible.io
+  <script defer data-domain="sportsbrackets.net" src="https://plausible.io/js/script.js"></script>
+  -->
 </head>
 <body data-page="home">
   <div data-mount="header"></div>
@@ -180,9 +200,11 @@
 
     /* ---- Tools ---- */
     var TOOLS = [
-      { icon: "bracket", name: "Bracket Maker", desc: "Build a single-elimination bracket for 4–32 teams, pick winners, and print it clean.", cta: "Open tool", href: "play/bracket-maker.html" },
+      { icon: "bracket", name: "Bracket Maker", desc: "Build a single-elimination bracket for 4–64 teams, pick winners, share a link, or export a PNG.", cta: "Open tool", href: "play/bracket-maker.html" },
       { icon: "grid", name: "Super Bowl Squares", desc: "Generate a 10×10 squares grid with random number draws — perfect for any big game.", cta: "Make a grid", href: "play/squares.html" },
-      { icon: "dice", name: "Raffle &amp; Bingo", desc: "Random raffle picker and printable bingo cards for watch parties and fundraisers.", cta: "Coming soon", href: "play/bracket-maker.html" }
+      { icon: "dice", name: "Raffle &amp; Bingo", desc: "Random raffle picker and printable 5×5 bingo cards for watch parties and fundraisers.", cta: "Draw a winner", href: "play/raffle.html" },
+      { icon: "bracket", name: "Round-Robin", desc: "Generate a balanced schedule where every team plays everyone — single or double.", cta: "Build schedule", href: "play/round-robin.html" },
+      { icon: "grid", name: "Pick'em Sheet", desc: "Pick every game, share your sheet with the group, then score it against the results.", cta: "Make picks", href: "play/pickem.html" }
     ];
     document.getElementById("toolGrid").innerHTML = TOOLS.map(function (t) {
       return '<div class="tool-card" data-reveal><div class="ico">' + IC[t.icon] + '</div>' +

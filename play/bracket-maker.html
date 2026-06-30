@@ -4,12 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bracket Maker — Build &amp; Print a Tournament Bracket | Sports Brackets</title>
-  <meta name="description" content="Free single-elimination bracket maker for 4 to 32 teams. Enter teams, click to pick winners, then print a clean, low-ink bracket. Auto-saves in your browser." />
+  <meta name="description" content="Free single-elimination bracket maker for 4 to 64 teams. Enter teams or load a preset, click to pick winners, then share a link, export a PNG, or print a clean low-ink bracket." />
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="canonical" href="https://sportsbrackets.net/play/bracket-maker.html" />
 </head>
 <body data-page="play">
   <div data-mount="header"></div>
@@ -19,7 +20,7 @@
       <div class="crumbs"><a href="../index.html">Home</a> / Play / Bracket Maker</div>
       <span class="eyebrow">Free · No signup · Auto-saves</span>
       <h1>Bracket Maker</h1>
-      <p>Drop in 4–32 teams, click a name to advance them, and print a clean single-elimination bracket. Your work saves automatically in this browser.</p>
+      <p>Drop in 4–64 teams or load a preset, click a name to advance them, then share a link, export a PNG, or print a clean single-elimination bracket. Your work saves automatically in this browser.</p>
     </div>
   </section>
 
@@ -34,12 +35,22 @@
             <input id="tName" type="text" value="My Tournament" maxlength="48" />
           </div>
           <div class="field">
+            <label for="tPreset">Load a preset</label>
+            <select id="tPreset">
+              <option value="">— Start blank —</option>
+              <option value="nba">NBA Playoffs (16)</option>
+              <option value="wc">World Cup Knockout (32)</option>
+              <option value="madness">March Madness (64)</option>
+            </select>
+          </div>
+          <div class="field">
             <label for="tSize">Bracket size</label>
             <select id="tSize">
               <option value="4">4 teams</option>
               <option value="8" selected>8 teams</option>
               <option value="16">16 teams</option>
               <option value="32">32 teams</option>
+              <option value="64">64 teams</option>
             </select>
           </div>
           <div class="field">
@@ -55,6 +66,12 @@
             <button class="btn btn--ghost btn--sm" id="shuffleBtn">Shuffle</button>
             <button class="btn btn--ghost btn--sm" id="resetBtn">Reset picks</button>
             <button class="btn btn--ghost btn--sm" id="printBtn">🖨️ Print</button>
+          </div>
+          <hr style="border:0;border-top:1px solid var(--line);margin:16px 0" />
+          <h3 style="font-size:.92rem;margin-bottom:10px">Share &amp; export</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <button class="btn btn--primary btn--sm" id="shareBtn">🔗 Share link</button>
+            <button class="btn btn--ghost btn--sm" id="pngBtn">🖼️ Download PNG</button>
           </div>
           <p class="hint" id="saveNote" style="margin-top:14px">Saved locally moments ago.</p>
         </aside>
@@ -77,6 +94,7 @@
   <div data-mount="footer"></div>
 
   <script src="../js/main.js"></script>
+  <script src="../js/data.js"></script>
   <script src="../js/bracket.js"></script>
 </body>
 </html>

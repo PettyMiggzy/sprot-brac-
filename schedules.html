@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="canonical" href="https://sportsbrackets.net/schedules.html" />
 </head>
 <body data-page="mlb">
   <div data-mount="header"></div>
@@ -44,7 +45,7 @@
             </div>
           </div>
           <div>
-            <h3 style="font-size:1rem;margin-bottom:12px;color:var(--ink-soft)">Upcoming schedule</h3>
+            <h3 style="font-size:1rem;margin-bottom:12px;color:var(--ink-soft);display:flex;align-items:center;gap:10px">Upcoming schedule <span class="pill" id="liveNote" style="font-weight:600">checking live feed…</span></h3>
             <div class="table-wrap">
               <table class="data">
                 <thead><tr><th>Date</th><th>Matchup</th><th>Time</th><th>TV</th></tr></thead>
@@ -65,45 +66,32 @@
   <div data-mount="footer"></div>
 
   <script src="js/main.js"></script>
+  <script src="js/data.js"></script>
   <script>
-    var LEAGUES = {
-      mlb: {
-        title: "MLB — American League East",
-        sub: "Sample standings & schedule. Top six in each league reach the postseason.",
-        stand: [["Yankees",54,32,"L2"],["Orioles",51,35,"W4"],["Red Sox",47,39,"W1"],["Rays",44,42,"L1"],["Blue Jays",40,46,"L3"]],
-        sched: [["Jul 1","Yankees @ Orioles","7:05 PM","ESPN"],["Jul 1","Red Sox @ Rays","6:40 PM","NESN"],["Jul 2","Blue Jays @ Yankees","7:05 PM","YES"],["Jul 3","Orioles @ Red Sox","7:10 PM","MASN"]]
-      },
-      nba: {
-        title: "Basketball — NBA Western Conference",
-        sub: "Sample standings & schedule. Seeds 7–10 play into the bracket via the play-in.",
-        stand: [["Thunder",58,18,"W6"],["Nuggets",53,23,"W2"],["Timberwolves",50,26,"L1"],["Clippers",48,28,"W3"],["Mavericks",46,30,"L2"]],
-        sched: [["Jul 1","Thunder @ Nuggets","9:00 PM","TNT"],["Jul 2","Clippers @ Mavericks","8:30 PM","ESPN"],["Jul 3","Wolves @ Thunder","9:30 PM","ABC"]]
-      },
-      nfl: {
-        title: "NFL — AFC Standings",
-        sub: "Sample standings & schedule. Seven teams per conference reach the playoffs.",
-        stand: [["Chiefs",13,4,"W3"],["Bills",12,5,"W1"],["Ravens",11,6,"L1"],["Bengals",10,7,"W2"],["Texans",9,8,"L1"]],
-        sched: [["Sep 7","Chiefs @ Bills","8:20 PM","NBC"],["Sep 7","Ravens @ Bengals","1:00 PM","CBS"],["Sep 8","Texans @ Chiefs","4:25 PM","FOX"]]
-      },
-      ncaa: {
-        title: "NCAA — Men's Basketball Top 5",
-        sub: "Sample AP-style poll & schedule. 68 teams make the March Madness field.",
-        stand: [["UConn",30,3,"W8"],["Houston",29,4,"W5"],["Purdue",28,5,"L1"],["Arizona",26,7,"W2"],["Auburn",25,8,"W1"]],
-        sched: [["Mar 1","UConn @ Houston","6:00 PM","CBS"],["Mar 2","Purdue @ Arizona","4:00 PM","ESPN"],["Mar 3","Auburn @ UConn","9:00 PM","ESPN2"]]
-      },
-      global: {
-        title: "Global Events — This Week",
-        sub: "Tennis, NHL, F1, NASCAR and the soccer calendar at a glance.",
-        stand: [["NHL: Panthers",52,24,"W3"],["F1: Verstappen",1,0,"P1"],["Tennis: Sinner",1,0,"No.1"],["NASCAR: Larson",1,0,"P1"],["NHL: Oilers",50,26,"W2"]],
-        sched: [["Jul 1","F1 — Austrian GP","9:00 AM","ESPN"],["Jul 2","NHL — Cup Final G5","8:00 PM","TNT"],["Jul 5","Tennis — Wimbledon R3","6:00 AM","ESPN"]]
-      }
-    };
+    var LEAGUES = SB.SAMPLE;
+    var liveCache = {}; // key -> live schedule rows once fetched
 
     var ORDER = [["mlb","MLB"],["nba","Basketball"],["nfl","NFL"],["ncaa","NCAA"],["global","Global"]];
     var tabs = document.getElementById("leagueTabs");
     tabs.innerHTML = ORDER.map(function (o) {
       return '<button data-key="' + o[0] + '">' + o[1] + '</button>';
     }).join("");
+
+    function teamCell(name) {
+      var c = SB.colorFor(name);
+      return '<td class="team" style="border-left:3px solid ' + c + '">' + name + '</td>';
+    }
+
+    function renderSched(rows, live) {
+      document.getElementById("schedRows").innerHTML = rows.map(function (r) {
+        return '<tr><td>' + r[0] + '</td>' + teamCell(r[1]) + '<td>' + r[2] + '</td><td>' + r[3] + '</td></tr>';
+      }).join("");
+      var note = document.getElementById("liveNote");
+      if (note) {
+        note.textContent = live ? "● Live schedule via TheSportsDB" : "Sample schedule (live feed unavailable)";
+        note.className = "pill " + (live ? "live" : "");
+      }
+    }
 
     function render(key) {
       var L = LEAGUES[key];
@@ -112,23 +100,32 @@
       document.getElementById("standRows").innerHTML = L.stand.map(function (r, i) {
         var pct = r[1] + r[2] > 0 ? (r[1] / (r[1] + r[2])).toFixed(3).replace(/^0/, "") : "—";
         var strk = /^W/.test(r[3]) ? '<span class="pill win">' + r[3] + '</span>' : (/^L/.test(r[3]) ? '<span class="pill loss">' + r[3] + '</span>' : r[3]);
-        return '<tr><td>' + (i + 1) + '</td><td class="team">' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td><td>' + pct + '</td><td>' + strk + '</td></tr>';
+        return '<tr><td>' + (i + 1) + '</td>' + teamCell(r[0]) + '<td>' + r[1] + '</td><td>' + r[2] + '</td><td>' + pct + '</td><td>' + strk + '</td></tr>';
       }).join("");
-      document.getElementById("schedRows").innerHTML = L.sched.map(function (r) {
-        return '<tr><td>' + r[0] + '</td><td class="team">' + r[1] + '</td><td>' + r[2] + '</td><td>' + r[3] + '</td></tr>';
-      }).join("");
+
+      // schedule: prefer cached live, else sample, then try to upgrade
+      renderSched(liveCache[key] || L.sched, !!liveCache[key]);
+      if (!liveCache[key] && SB.fetchLiveSchedule) {
+        SB.fetchLiveSchedule(key).then(function (rows) {
+          liveCache[key] = rows;
+          if (currentKey === key) renderSched(rows, true);
+        }).catch(function () { /* keep sample silently */ });
+      }
+
       Array.prototype.forEach.call(tabs.children, function (b) {
         b.classList.toggle("active", b.getAttribute("data-key") === key);
       });
       if (history.replaceState) history.replaceState(null, "", "#" + key);
     }
 
+    var currentKey = "mlb";
     tabs.addEventListener("click", function (e) {
-      if (e.target.tagName === "BUTTON") render(e.target.getAttribute("data-key"));
+      if (e.target.tagName === "BUTTON") { currentKey = e.target.getAttribute("data-key"); render(currentKey); }
     });
 
     var initial = (location.hash || "").replace("#", "");
-    render(LEAGUES[initial] ? initial : "mlb");
+    currentKey = LEAGUES[initial] ? initial : "mlb";
+    render(currentKey);
   </script>
 </body>
 </html>

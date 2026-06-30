@@ -15,16 +15,23 @@ anywhere (GitHub Pages, Netlify, Vercel, S3, or any plain web server).
 | --- | --- |
 | `index.html` | Landing page — hero, World Cup feature, sport hubs, tools, blog teasers, newsletter |
 | `world-cup-2026.html` | 2026 FIFA World Cup hub — printable 48-team knockout bracket, group standings, broadcast schedule, fantasy pool |
-| `schedules.html` | Tabbed standings + schedules for MLB / NBA / NFL / NCAA / Global events |
-| `play/bracket-maker.html` | **Interactive bracket maker** — 4–32 teams, click to advance winners, seed/shuffle, auto-saves, print |
+| `schedules.html` | Tabbed standings + schedules for MLB / NBA / NFL / NCAA / Global, with **live-feed upgrade** + team colors |
+| `play/bracket-maker.html` | **Interactive bracket maker** — 4–64 teams, presets, click to advance, **share link**, **PNG export**, auto-saves, print |
 | `play/squares.html` | **Super Bowl Squares generator** — random 100-square fill + hidden number draw, print-ready |
+| `play/round-robin.html` | **Round-robin generator** — every team plays everyone, single or double, printable |
+| `play/raffle.html` | **Raffle picker + bingo cards** — animated random draw and printable 5×5 bingo |
+| `play/pickem.html` | **Pick'em sheet** — pick every game, share a link, score against results |
 | `blog.html` | "Bracket Banter" blog index |
 | `404.html` | Friendly not-found page |
 
 ### Highlights
 - **Truly print-friendly** — dedicated `@media print` styles strip the chrome and render clean, low-ink brackets and tables. Hit *Print* on any tool.
-- **Interactive bracket maker** — full single-elimination logic with downstream pick invalidation, standard 1-vs-N seeding, and `localStorage` persistence.
+- **Interactive bracket maker** — full single-elimination logic with downstream pick invalidation, standard 1-vs-N seeding, presets (NBA / World Cup / March Madness 64), `localStorage` persistence, **shareable URLs** (state encoded in the link), and a self-contained **canvas PNG export**.
+- **Dark mode** — light/dark toggle in the header, remembered across visits, applied before first paint (no flash).
+- **Live data, gracefully** — `js/data.js` upgrades schedules from [TheSportsDB](https://www.thesportsdb.com) when reachable and silently falls back to bundled sample data otherwise, so nothing ever breaks offline.
+- **Team colors** — tasteful per-team color accents across standings, schedules, and exports (no copyrighted logos).
 - **Shared chrome** — header/nav/footer are injected from `js/main.js`, so the nav is maintained in exactly one place.
+- **SEO-ready** — JSON-LD structured data (`WebSite` + `SportsEvent`), canonical tags, OpenGraph/Twitter cards, sitemap, and an opt-in privacy-friendly analytics hook.
 - **Responsive** — mobile nav, fluid type, and horizontal-scroll brackets on small screens.
 - **Zero dependencies** — just HTML, CSS, and vanilla JS. Inter is loaded from Google Fonts.
 
@@ -69,11 +76,15 @@ directory set to the project root.
 ├── 404.html
 ├── play/
 │   ├── bracket-maker.html
-│   └── squares.html
-├── css/styles.css          # design system + print styles
+│   ├── squares.html
+│   ├── round-robin.html
+│   ├── raffle.html
+│   └── pickem.html
+├── css/styles.css          # design system + dark theme + print styles
 ├── js/
-│   ├── main.js             # shared header/footer, nav, toast, reveal-on-scroll
-│   └── bracket.js          # bracket maker engine
+│   ├── main.js             # shared header/footer, nav, theme toggle, toast, reveal
+│   ├── data.js             # team colors + sample data + live fetch w/ fallback
+│   └── bracket.js          # bracket engine, presets, share-link, PNG export
 ├── assets/                 # logo + favicon (SVG)
 ├── robots.txt · sitemap.xml · .nojekyll
 ```

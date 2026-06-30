@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pick'em Sheet — Make &amp; Share Game Picks | Sports Brackets</title>
+  <meta name="description" content="Build a weekly pick'em sheet, pick every game, share a link with friends, and score it against the real results. Free and client-side." />
+  <link rel="canonical" href="https://sportsbrackets.net/play/pickem.html" />
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    .game { display:grid; grid-template-columns:1fr auto 1fr; gap:10px; align-items:center; padding:10px 0; border-bottom:1px solid var(--line-soft); }
+    .pickbtn { border:1.5px solid var(--line); background:#fff; border-radius:10px; padding:12px 14px; font-weight:700; transition:.15s; text-align:left; display:flex; align-items:center; gap:8px; }
+    [data-theme="dark"] .pickbtn { background:var(--bg-alt); }
+    .pickbtn:hover { border-color:var(--accent); }
+    .pickbtn.sel { border-color:var(--accent); background:rgba(47,109,246,.08); }
+    .pickbtn.sel.right { border-color:var(--accent-2); background:rgba(22,163,74,.12); }
+    .pickbtn.sel.wrong { border-color:var(--danger); background:rgba(220,38,38,.1); }
+    .pickbtn .sw { width:10px; height:10px; border-radius:50%; flex:none; }
+    .vs { color:var(--ink-mute); font-weight:700; font-size:.8rem; }
+    .scorebar { display:flex; align-items:center; gap:14px; padding:14px 18px; border-radius:var(--radius); background:var(--bg-alt); border:1px solid var(--line); margin-bottom:18px; flex-wrap:wrap; }
+    .scorebar b { font-size:1.4rem; }
+  </style>
+</head>
+<body data-page="play">
+  <div data-mount="header"></div>
+
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="crumbs"><a href="../index.html">Home</a> / Play / Pick'em</div>
+      <span class="eyebrow">Free · Share with the group</span>
+      <h1>Pick'em Sheet</h1>
+      <p>List the week's games, pick every winner, and share your sheet with a link. Flip on results mode to score it.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="tool-shell">
+        <aside class="panel">
+          <h3>Setup</h3>
+          <div class="field">
+            <label for="title">Sheet name</label>
+            <input id="title" type="text" value="Week 1 Pick'em" maxlength="40" />
+          </div>
+          <div class="field">
+            <label for="games">Games — “Away vs Home” per line</label>
+            <textarea id="games" spellcheck="false">Chiefs vs Bills
+Ravens vs Bengals
+Cowboys vs Eagles
+49ers vs Rams
+Lions vs Packers</textarea>
+          </div>
+          <button class="btn btn--primary" style="width:100%;margin-bottom:8px" id="buildBtn">Build sheet</button>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <button class="btn btn--ghost btn--sm" id="shareBtn">🔗 Share picks</button>
+            <button class="btn btn--ghost btn--sm" id="resultsBtn">✅ Results mode</button>
+          </div>
+          <p class="hint" id="note" style="margin-top:12px">Picks auto-save in this browser.</p>
+        </aside>
+
+        <div>
+          <div class="scorebar" id="scorebar" style="display:none">
+            <span class="muted" style="font-weight:700;text-transform:uppercase;font-size:.78rem;letter-spacing:.08em">Score</span>
+            <b id="score">0 / 0</b>
+            <span class="muted" id="pct"></span>
+            <span class="pill live" id="modePill" style="margin-left:auto">results mode — tap the actual winner</span>
+          </div>
+          <div class="toolbar"><strong style="font-size:1.15rem" id="boardTitle">Week 1 Pick'em</strong></div>
+          <div id="board" class="panel"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div data-mount="footer"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/data.js"></script>
+  <script>
+    var $ = function (id) { return document.getElementById(id); };
+    var KEY = "sb.pickem.v1";
+    var state = load() || { title: "Week 1 Pick'em", games: [], picks: {}, results: {} };
+    var resultsMode = false;
+
+    function load() { try { return JSON.parse(localStorage.getItem(KEY)); } catch (e) { return null; } }
+    function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+    function parseGames() {
+      return $("games").value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean).map(function (line) {
+        var parts = line.split(/\s+vs\.?\s+/i);
+        return { a: (parts[0] || "Team A").trim(), b: (parts[1] || "Team B").trim() };
+      });
+    }
+
+    function build() {
+      state.title = $("title").value.trim() || "Pick'em";
+      state.games = parseGames();
+      state.picks = {}; state.results = {};
+      save(); render();
+      SB.toast("Sheet built — make your picks!");
+    }
+
+    function render() {
+      $("boardTitle").textContent = state.title;
+      $("title").value = state.title;
+      $("scorebar").style.display = resultsMode ? "flex" : "none";
+
+      $("board").innerHTML = state.games.map(function (g, i) {
+        return '<div class="game">' +
+          pickBtn(i, "a", g.a) +
+          '<span class="vs">VS</span>' +
+          pickBtn(i, "b", g.b) +
+          '</div>';
+      }).join("") || '<p class="muted">Add some games and hit “Build sheet”.</p>';
+
+      if (resultsMode) score();
+    }
+
+    function pickBtn(i, side, name) {
+      var picked = state.picks[i] === side;
+      var cls = "pickbtn" + (picked ? " sel" : "");
+      if (resultsMode && picked && state.results[i]) {
+        cls += state.results[i] === side ? " right" : " wrong";
+      }
+      var c = SB.colorFor(name);
+      return '<button class="' + cls + '" data-i="' + i + '" data-side="' + side + '">' +
+        '<span class="sw" style="background:' + c + '"></span>' + name + '</button>';
+    }
+
+    function score() {
+      var correct = 0, decided = 0;
+      state.games.forEach(function (g, i) {
+        if (state.results[i]) { decided++; if (state.picks[i] === state.results[i]) correct++; }
+      });
+      $("score").textContent = correct + " / " + decided;
+      $("pct").textContent = decided ? Math.round(correct / decided * 100) + "% correct" : "no results entered yet";
+    }
+
+    $("board").addEventListener("click", function (e) {
+      var b = e.target.closest(".pickbtn");
+      if (!b) return;
+      var i = b.getAttribute("data-i"), side = b.getAttribute("data-side");
+      if (resultsMode) { state.results[i] = state.results[i] === side ? null : side; }
+      else { state.picks[i] = state.picks[i] === side ? null : side; }
+      save(); render();
+    });
+
+    $("buildBtn").addEventListener("click", build);
+    $("title").addEventListener("input", function () { state.title = $("title").value; $("boardTitle").textContent = state.title; save(); });
+
+    $("resultsBtn").addEventListener("click", function () {
+      resultsMode = !resultsMode;
+      $("resultsBtn").classList.toggle("btn--primary", resultsMode);
+      SB.toast(resultsMode ? "Results mode: tap the real winners" : "Back to picking");
+      render();
+    });
+
+    $("shareBtn").addEventListener("click", function () {
+      try {
+        var payload = { t: state.title, g: state.games, p: state.picks };
+        var code = encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(payload)))));
+        var url = location.origin + location.pathname + "#p=" + code;
+        if (navigator.clipboard) navigator.clipboard.writeText(url).then(function () { SB.toast("Pick'em link copied!"); }, function () { prompt("Copy:", url); });
+        else prompt("Copy:", url);
+        if (history.replaceState) history.replaceState(null, "", "#p=" + code);
+      } catch (e) { SB.toast("Couldn't build link."); }
+    });
+
+    // Load shared sheet from URL
+    (function () {
+      var m = location.hash.match(/p=([^&]+)/);
+      if (m) {
+        try {
+          var o = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(m[1])))));
+          state.title = o.t || state.title; state.games = o.g || []; state.picks = o.p || {}; state.results = {};
+          $("games").value = state.games.map(function (g) { return g.a + " vs " + g.b; }).join("\n");
+          save();
+          SB.toast("Loaded a shared sheet!");
+        } catch (e) {}
+      } else if (!state.games.length) {
+        state.games = parseGames();
+      } else {
+        $("games").value = state.games.map(function (g) { return g.a + " vs " + g.b; }).join("\n");
+      }
+      render();
+    })();
+  </script>
+</body>
+</html>
