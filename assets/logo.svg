@@ -1,0 +1,6 @@
+<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sports Brackets logo">
+  <rect width="40" height="40" rx="10" fill="#131725"/>
+  <path d="M9 11h6v4H9v6h6v4H9" stroke="#2f6df6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M21 15h4l3 5-3 5h-4" stroke="#f59e0b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <circle cx="30" cy="20" r="2.2" fill="#16a34a"/>
+</svg>

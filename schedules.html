@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Schedules &amp; Standings — MLB, NBA, NFL &amp; NCAA | Sports Brackets</title>
+  <meta name="description" content="Live-style standings and broadcast schedules for MLB, the NBA, NFL and NCAA — printer-friendly and updated each round." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="mlb">
+  <div data-mount="header"></div>
+
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="crumbs"><a href="index.html">Home</a> / Schedules &amp; Standings</div>
+      <span class="eyebrow">Updated each round</span>
+      <h1>Schedules &amp; Standings</h1>
+      <p>Standings and upcoming broadcast schedules across every major league. Pick a league, print the table, win the group chat.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="tabs" id="leagueTabs"></div>
+
+      <div id="leaguePanel">
+        <div class="section-head" style="margin-bottom:20px">
+          <h2 id="leagueTitle" style="font-size:1.5rem"></h2>
+          <p id="leagueSub"></p>
+        </div>
+
+        <div class="grid-2" style="align-items:start">
+          <div>
+            <h3 style="font-size:1rem;margin-bottom:12px;color:var(--ink-soft)">Standings</h3>
+            <div class="table-wrap">
+              <table class="data">
+                <thead><tr><th>#</th><th>Team</th><th>W</th><th>L</th><th>PCT</th><th>Strk</th></tr></thead>
+                <tbody id="standRows"></tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <h3 style="font-size:1rem;margin-bottom:12px;color:var(--ink-soft)">Upcoming schedule</h3>
+            <div class="table-wrap">
+              <table class="data">
+                <thead><tr><th>Date</th><th>Matchup</th><th>Time</th><th>TV</th></tr></thead>
+                <tbody id="schedRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="toolbar" style="margin-top:22px">
+          <button class="btn btn--primary btn--sm" onclick="window.print()">🖨️ Print standings</button>
+          <a class="btn btn--ghost btn--sm" href="play/bracket-maker.html">Build the playoff bracket →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div data-mount="footer"></div>
+
+  <script src="js/main.js"></script>
+  <script>
+    var LEAGUES = {
+      mlb: {
+        title: "MLB — American League East",
+        sub: "Sample standings & schedule. Top six in each league reach the postseason.",
+        stand: [["Yankees",54,32,"L2"],["Orioles",51,35,"W4"],["Red Sox",47,39,"W1"],["Rays",44,42,"L1"],["Blue Jays",40,46,"L3"]],
+        sched: [["Jul 1","Yankees @ Orioles","7:05 PM","ESPN"],["Jul 1","Red Sox @ Rays","6:40 PM","NESN"],["Jul 2","Blue Jays @ Yankees","7:05 PM","YES"],["Jul 3","Orioles @ Red Sox","7:10 PM","MASN"]]
+      },
+      nba: {
+        title: "Basketball — NBA Western Conference",
+        sub: "Sample standings & schedule. Seeds 7–10 play into the bracket via the play-in.",
+        stand: [["Thunder",58,18,"W6"],["Nuggets",53,23,"W2"],["Timberwolves",50,26,"L1"],["Clippers",48,28,"W3"],["Mavericks",46,30,"L2"]],
+        sched: [["Jul 1","Thunder @ Nuggets","9:00 PM","TNT"],["Jul 2","Clippers @ Mavericks","8:30 PM","ESPN"],["Jul 3","Wolves @ Thunder","9:30 PM","ABC"]]
+      },
+      nfl: {
+        title: "NFL — AFC Standings",
+        sub: "Sample standings & schedule. Seven teams per conference reach the playoffs.",
+        stand: [["Chiefs",13,4,"W3"],["Bills",12,5,"W1"],["Ravens",11,6,"L1"],["Bengals",10,7,"W2"],["Texans",9,8,"L1"]],
+        sched: [["Sep 7","Chiefs @ Bills","8:20 PM","NBC"],["Sep 7","Ravens @ Bengals","1:00 PM","CBS"],["Sep 8","Texans @ Chiefs","4:25 PM","FOX"]]
+      },
+      ncaa: {
+        title: "NCAA — Men's Basketball Top 5",
+        sub: "Sample AP-style poll & schedule. 68 teams make the March Madness field.",
+        stand: [["UConn",30,3,"W8"],["Houston",29,4,"W5"],["Purdue",28,5,"L1"],["Arizona",26,7,"W2"],["Auburn",25,8,"W1"]],
+        sched: [["Mar 1","UConn @ Houston","6:00 PM","CBS"],["Mar 2","Purdue @ Arizona","4:00 PM","ESPN"],["Mar 3","Auburn @ UConn","9:00 PM","ESPN2"]]
+      },
+      global: {
+        title: "Global Events — This Week",
+        sub: "Tennis, NHL, F1, NASCAR and the soccer calendar at a glance.",
+        stand: [["NHL: Panthers",52,24,"W3"],["F1: Verstappen",1,0,"P1"],["Tennis: Sinner",1,0,"No.1"],["NASCAR: Larson",1,0,"P1"],["NHL: Oilers",50,26,"W2"]],
+        sched: [["Jul 1","F1 — Austrian GP","9:00 AM","ESPN"],["Jul 2","NHL — Cup Final G5","8:00 PM","TNT"],["Jul 5","Tennis — Wimbledon R3","6:00 AM","ESPN"]]
+      }
+    };
+
+    var ORDER = [["mlb","MLB"],["nba","Basketball"],["nfl","NFL"],["ncaa","NCAA"],["global","Global"]];
+    var tabs = document.getElementById("leagueTabs");
+    tabs.innerHTML = ORDER.map(function (o) {
+      return '<button data-key="' + o[0] + '">' + o[1] + '</button>';
+    }).join("");
+
+    function render(key) {
+      var L = LEAGUES[key];
+      document.getElementById("leagueTitle").textContent = L.title;
+      document.getElementById("leagueSub").textContent = L.sub;
+      document.getElementById("standRows").innerHTML = L.stand.map(function (r, i) {
+        var pct = r[1] + r[2] > 0 ? (r[1] / (r[1] + r[2])).toFixed(3).replace(/^0/, "") : "—";
+        var strk = /^W/.test(r[3]) ? '<span class="pill win">' + r[3] + '</span>' : (/^L/.test(r[3]) ? '<span class="pill loss">' + r[3] + '</span>' : r[3]);
+        return '<tr><td>' + (i + 1) + '</td><td class="team">' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td><td>' + pct + '</td><td>' + strk + '</td></tr>';
+      }).join("");
+      document.getElementById("schedRows").innerHTML = L.sched.map(function (r) {
+        return '<tr><td>' + r[0] + '</td><td class="team">' + r[1] + '</td><td>' + r[2] + '</td><td>' + r[3] + '</td></tr>';
+      }).join("");
+      Array.prototype.forEach.call(tabs.children, function (b) {
+        b.classList.toggle("active", b.getAttribute("data-key") === key);
+      });
+      if (history.replaceState) history.replaceState(null, "", "#" + key);
+    }
+
+    tabs.addEventListener("click", function (e) {
+      if (e.target.tagName === "BUTTON") render(e.target.getAttribute("data-key"));
+    });
+
+    var initial = (location.hash || "").replace("#", "");
+    render(LEAGUES[initial] ? initial : "mlb");
+  </script>
+</body>
+</html>

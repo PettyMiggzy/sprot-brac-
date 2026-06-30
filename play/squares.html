@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Super Bowl Squares Generator — Free 10×10 Grid | Sports Brackets</title>
+  <meta name="description" content="Free Super Bowl Squares generator. Add players, randomly assign 100 squares, draw the 0–9 number rows, and print a clean grid for any big game." />
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    .squares { border-collapse: collapse; width: 100%; min-width: 620px; }
+    .squares th, .squares td { border: 1px solid var(--line); text-align: center; font-size: .8rem; padding: 0; }
+    .squares td.cell { height: 52px; vertical-align: middle; font-weight: 600; }
+    .squares .axis { background: var(--bg-alt); font-weight: 800; color: var(--ink-soft); }
+    .squares .corner { background: var(--ink); color: #fff; font-size: .68rem; }
+    .squares .axis-team { background: var(--accent); color: #fff; letter-spacing: .04em; }
+    .squares td.cell.mine { background: rgba(47,109,246,.1); }
+  </style>
+</head>
+<body data-page="play">
+  <div data-mount="header"></div>
+
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="crumbs"><a href="../index.html">Home</a> / Play / Super Bowl Squares</div>
+      <span class="eyebrow">Free · 100 squares · Random draw</span>
+      <h1>Super Bowl Squares</h1>
+      <p>Add your players, randomly fill all 100 squares, then draw the 0–9 numbers for each team. Print it and run the pool.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="tool-shell">
+        <aside class="panel">
+          <h3>Setup</h3>
+          <div class="field">
+            <label for="teamA">Team across the top</label>
+            <input id="teamA" type="text" value="AFC" maxlength="20" />
+          </div>
+          <div class="field">
+            <label for="teamB">Team down the side</label>
+            <input id="teamB" type="text" value="NFC" maxlength="20" />
+          </div>
+          <div class="field">
+            <label for="players">Players (one per line)</label>
+            <textarea id="players" spellcheck="false">Alex
+Sam
+Jordan
+Casey
+Taylor</textarea>
+            <p class="hint">Names are spread evenly across the 100 squares.</p>
+          </div>
+          <button class="btn btn--primary" style="width:100%;margin-bottom:8px" id="fillBtn">Fill 100 squares</button>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <button class="btn btn--ghost btn--sm" id="drawBtn">Draw numbers</button>
+            <button class="btn btn--ghost btn--sm" id="printBtn">🖨️ Print</button>
+          </div>
+          <p class="hint" style="margin-top:12px">Standard rule: numbers stay hidden until every square is filled, then you draw.</p>
+        </aside>
+
+        <div>
+          <div class="toolbar">
+            <strong style="font-size:1.15rem" id="gridTitle">Super Bowl Squares</strong>
+            <span class="pill live" id="drawState">numbers not drawn</span>
+          </div>
+          <div class="table-wrap" style="padding:0">
+            <table class="squares" id="grid"></table>
+          </div>
+          <p class="hint">Tip: each filled square shows a player. After the draw, the winning square is the one matching each team's last-digit score per quarter.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div data-mount="footer"></div>
+
+  <script src="../js/main.js"></script>
+  <script>
+    var $ = function (id) { return document.getElementById(id); };
+    var assigned = null;   // 10x10 of player names
+    var colNums = null, rowNums = null;
+
+    function players() {
+      return $("players").value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean);
+    }
+    function shuffle(a) {
+      for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+      return a;
+    }
+
+    function fill() {
+      var ppl = players();
+      if (!ppl.length) { SB.toast("Add at least one player."); return; }
+      var cells = [];
+      for (var i = 0; i < 100; i++) cells.push(ppl[i % ppl.length]);
+      shuffle(cells);
+      assigned = [];
+      for (var r = 0; r < 10; r++) assigned.push(cells.slice(r * 10, r * 10 + 10));
+      colNums = null; rowNums = null;
+      render();
+      SB.toast("Squares filled — now draw the numbers.");
+    }
+
+    function draw() {
+      if (!assigned) { SB.toast("Fill the squares first."); return; }
+      colNums = shuffle([0,1,2,3,4,5,6,7,8,9].slice());
+      rowNums = shuffle([0,1,2,3,4,5,6,7,8,9].slice());
+      render();
+      SB.toast("Numbers drawn. Good luck!");
+    }
+
+    function render() {
+      var A = $("teamA").value || "Team A";
+      var B = $("teamB").value || "Team B";
+      $("gridTitle").textContent = A + " vs " + B + " — Squares";
+      var drawn = !!colNums;
+      $("drawState").textContent = drawn ? "numbers drawn" : "numbers not drawn";
+      $("drawState").className = "pill " + (drawn ? "win" : "live");
+
+      var html = "";
+      // header rows
+      html += '<tr><td class="corner" colspan="2" rowspan="2">' + A + ' →<br>↓ ' + B + '</td>' +
+              '<td class="axis-team" colspan="10">' + A + '</td></tr>';
+      html += '<tr>';
+      for (var c = 0; c < 10; c++) html += '<td class="axis">' + (drawn ? colNums[c] : "?") + '</td>';
+      html += '</tr>';
+
+      for (var r = 0; r < 10; r++) {
+        html += '<tr>';
+        if (r === 0) html += '<td class="axis-team" rowspan="10" style="writing-mode:vertical-rl;transform:rotate(180deg)">' + B + '</td>';
+        html += '<td class="axis">' + (drawn ? rowNums[r] : "?") + '</td>';
+        for (var c2 = 0; c2 < 10; c2++) {
+          var who = assigned ? assigned[r][c2] : "";
+          html += '<td class="cell">' + who + '</td>';
+        }
+        html += '</tr>';
+      }
+      $("grid").innerHTML = html;
+    }
+
+    $("fillBtn").addEventListener("click", fill);
+    $("drawBtn").addEventListener("click", draw);
+    $("printBtn").addEventListener("click", function () { window.print(); });
+    $("teamA").addEventListener("input", render);
+    $("teamB").addEventListener("input", render);
+
+    fill();
+  </script>
+</body>
+</html>

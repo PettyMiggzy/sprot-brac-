@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sports Brackets — Printable Brackets, Schedules &amp; Live Playoff Tracking</title>
+  <meta name="description" content="Low-ink, printer-friendly tournament brackets, master broadcast schedules, and real-time playoff tracking for MLB, NBA, NFL, NCAA and the 2026 FIFA World Cup." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <meta property="og:title" content="Sports Brackets — Brackets, Schedules & Live Playoff Tracking" />
+  <meta property="og:description" content="Printable brackets, master schedules, and real-time standings for every league that matters." />
+  <meta property="og:type" content="website" />
+</head>
+<body data-page="home">
+  <div data-mount="header"></div>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div data-reveal>
+          <span class="eyebrow">🏆 The fan's HQ for bracket season</span>
+          <h1>Every bracket. Every schedule.<br /><span>One clean printout.</span></h1>
+          <p class="lead">Low-ink, printer-friendly tournament brackets, master broadcast schedules, and real-time playoff tracking across MLB, the NBA, NFL, NCAA — and the 2026 FIFA World Cup.</p>
+          <div class="hero-actions">
+            <a class="btn btn--primary" href="play/bracket-maker.html">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 7h6v10H5zM13 9h6M13 15h6M11 12h2" stroke-linecap="round"/></svg>
+              Build a Bracket
+            </a>
+            <a class="btn btn--light" href="world-cup-2026.html">World Cup 2026 Hub →</a>
+          </div>
+          <div class="hero-stats">
+            <div><b>120+</b><span>PRINTABLE BRACKETS</span></div>
+            <div><b>9</b><span>LEAGUES TRACKED</span></div>
+            <div><b>Live</b><span>PLAYOFF STANDINGS</span></div>
+          </div>
+        </div>
+
+        <div class="hero-card" data-reveal>
+          <h4>Conference Finals · Live</h4>
+          <div class="mini-bracket">
+            <div class="mini-col">
+              <div class="mini-team win"><span class="dot"></span>Thunder</div>
+              <div class="mini-team"><span class="dot"></span>Nuggets</div>
+              <div class="mini-team"><span class="dot"></span>Pacers</div>
+              <div class="mini-team win"><span class="dot"></span>Knicks</div>
+            </div>
+            <div class="mini-col mini-col--mid">
+              <div class="mini-team win"><span class="dot"></span>Thunder</div>
+              <div class="mini-team win"><span class="dot"></span>Knicks</div>
+            </div>
+            <div class="mini-col mini-col--mid">
+              <div class="mini-team win" style="border-color:var(--accent-3);background:rgba(245,158,11,.18)"><span class="dot" style="background:var(--accent-3)"></span>Champion</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FEATURE: WORLD CUP ===================== -->
+  <section class="section">
+    <div class="wrap">
+      <div class="feature" data-reveal>
+        <div>
+          <span class="tag">⚽ Featured · 48 teams · 3 nations</span>
+          <h2>2026 FIFA World Cup, fully bracketed.</h2>
+          <p>Download the official printable bracket, follow the master broadcast schedule across every time zone, and run your office pool with our fantasy hub — payouts included.</p>
+          <div class="feature-actions">
+            <a class="btn btn--primary" href="world-cup-2026.html">Open the Hub</a>
+            <a class="btn btn--light" href="world-cup-2026.html#bracket">Download Bracket (PDF)</a>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="row"><b>Opening Match</b><span class="when">Jun 11, 2026 · Estadio Azteca</span></div>
+          <div class="row"><b>Round of 32</b><span class="when">Jun 28 – Jul 3</span></div>
+          <div class="row"><b>Quarterfinals</b><span class="when">Jul 9 – Jul 11</span></div>
+          <div class="row"><b>Final</b><span class="when">Jul 19 · MetLife Stadium</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SPORT HUBS ===================== -->
+  <section class="section section--alt">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Pick your league</span>
+        <h2>Schedule hubs for every sport</h2>
+        <p>Current schedules, playoff brackets, standings, and team identity guides — all printer-friendly.</p>
+      </div>
+      <div class="hub-grid" id="hubGrid"></div>
+    </div>
+  </section>
+
+  <!-- ===================== TOOLS ===================== -->
+  <section class="section" id="play">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Play</span>
+        <h2>Tools &amp; generators</h2>
+        <p>Run the pool, make the bracket, print the squares. Free, no signup, works on your phone.</p>
+      </div>
+      <div class="tool-grid" id="toolGrid"></div>
+    </div>
+  </section>
+
+  <!-- ===================== POSTS ===================== -->
+  <section class="section section--alt">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Bracket Banter</span>
+        <h2>Latest from the blog</h2>
+        <p>Predictions, printable drops, and the occasional hot take from the SportsBrackets crew.</p>
+      </div>
+      <div class="post-grid" id="postGrid"></div>
+      <div style="margin-top:28px"><a class="btn btn--ghost" href="blog.html">Read the blog →</a></div>
+    </div>
+  </section>
+
+  <!-- ===================== ABOUT ===================== -->
+  <section class="section" id="about">
+    <div class="wrap grid-2">
+      <div data-reveal>
+        <span class="eyebrow">Why Sports Brackets</span>
+        <h2 style="font-size:clamp(1.6rem,3.5vw,2.3rem);margin:10px 0 14px">Built for the people who actually run the pool.</h2>
+        <p class="muted">We obsess over the details that matter on game day: brackets that fit one page, schedules that show your local tip-off time, and standings that update the second a buzzer sounds. No ink-guzzling backgrounds. No 12-tab spreadsheets. Just clean tools that make you the MVP of group chat.</p>
+        <div class="callout" style="margin-top:20px">Everything on this site is free to print and free to share. Tip your bracket commissioner.</div>
+      </div>
+      <div data-reveal>
+        <div class="newsletter" id="newsletter">
+          <h2>Never miss a bracket drop</h2>
+          <p>Join the newsletter for new printables, schedule updates, and pool reminders before every major tournament.</p>
+          <form class="news-form" onsubmit="return SB.subscribe(event)">
+            <input type="email" required placeholder="you@email.com" aria-label="Email address" />
+            <button class="btn btn--primary" type="submit">Subscribe</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div data-mount="footer"></div>
+
+  <script src="js/main.js"></script>
+  <script>
+    /* ---- Icon set ---- */
+    var IC = {
+      baseball: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M5 5c3 3 3 11 0 14M19 5c-3 3-3 11 0 14" stroke-linecap="round"/></svg>',
+      basketball: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3v18M5 5c4 3 6 9 5 14M19 5c-4 3-6 9-5 14" stroke-linecap="round"/></svg>',
+      football: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12c0-4 4-8 8-8s8 4 8 8-4 8-8 8-8-4-8-8Z"/><path d="M9 12h6M11 10v4M13 10v4" stroke-linecap="round"/></svg>',
+      ncaa: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-5 9 5-9 5-9-5Z"/><path d="M7 11v4c0 1 2 2 5 2s5-1 5-2v-4M21 9v5" stroke-linecap="round"/></svg>',
+      soccer: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="m12 7 3 2-1 4h-4l-1-4 3-2Z"/></svg>',
+      globe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18" stroke-linecap="round"/></svg>',
+      bracket: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5v14M4 12h6m0-5v10m0 0 5 0m-5-10 5 0m0 5h5" stroke-linecap="round"/></svg>',
+      grid: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M4 15h16M10 4v16M15 4v16"/></svg>',
+      dice: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1.1" fill="currentColor"/><circle cx="15" cy="15" r="1.1" fill="currentColor"/><circle cx="15" cy="9" r="1.1" fill="currentColor"/><circle cx="9" cy="15" r="1.1" fill="currentColor"/></svg>',
+      arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    };
+
+    /* ---- Sport hubs ---- */
+    var HUBS = [
+      { icon: "baseball", name: "MLB", desc: "162-game schedule, playoff bracket & live standings.", tags: ["Schedule", "Bracket", "Standings"], href: "schedules.html#mlb" },
+      { icon: "basketball", name: "Basketball", desc: "NBA, WNBA & the road through the playoffs.", tags: ["NBA", "WNBA", "Playoffs"], href: "schedules.html#nba" },
+      { icon: "football", name: "NFL", desc: "Weekly slate, playoff picture & draft order.", tags: ["Schedule", "Playoffs", "Draft"], href: "schedules.html#nfl" },
+      { icon: "ncaa", name: "NCAA", desc: "Football, basketball & baseball — March Madness ready.", tags: ["CFB", "CBB", "CWS"], href: "schedules.html#ncaa" },
+      { icon: "soccer", name: "World Cup 2026", desc: "48-team bracket, group stage & broadcast guide.", tags: ["Bracket", "Groups", "Fantasy"], href: "world-cup-2026.html" },
+      { icon: "globe", name: "Global Events", desc: "Tennis, NHL, F1, NASCAR & the soccer calendar.", tags: ["NHL", "F1", "Tennis"], href: "schedules.html#global" }
+    ];
+    document.getElementById("hubGrid").innerHTML = HUBS.map(function (h) {
+      return '<a class="hub-card" href="' + h.href + '" data-reveal>' +
+        '<span class="arrow">' + IC.arrow + '</span>' +
+        '<div class="ico">' + IC[h.icon] + '</div>' +
+        '<h3>' + h.name + '</h3><p>' + h.desc + '</p>' +
+        '<div class="links">' + h.tags.map(function (t) { return '<span>' + t + '</span>'; }).join("") + '</div></a>';
+    }).join("");
+
+    /* ---- Tools ---- */
+    var TOOLS = [
+      { icon: "bracket", name: "Bracket Maker", desc: "Build a single-elimination bracket for 4–32 teams, pick winners, and print it clean.", cta: "Open tool", href: "play/bracket-maker.html" },
+      { icon: "grid", name: "Super Bowl Squares", desc: "Generate a 10×10 squares grid with random number draws — perfect for any big game.", cta: "Make a grid", href: "play/squares.html" },
+      { icon: "dice", name: "Raffle &amp; Bingo", desc: "Random raffle picker and printable bingo cards for watch parties and fundraisers.", cta: "Coming soon", href: "play/bracket-maker.html" }
+    ];
+    document.getElementById("toolGrid").innerHTML = TOOLS.map(function (t) {
+      return '<div class="tool-card" data-reveal><div class="ico">' + IC[t.icon] + '</div>' +
+        '<h3>' + t.name + '</h3><p>' + t.desc + '</p>' +
+        '<a href="' + t.href + '">' + t.cta + ' ' + IC.arrow + '</a></div>';
+    }).join("");
+
+    /* ---- Posts ---- */
+    var POSTS = [
+      { cat: "World Cup", title: "How to fill out a 48-team World Cup bracket", excerpt: "The expanded format changes everything. Here's our group-by-group strategy.", who: "Bracket Banter", when: "3 days ago", tint: "WC26" },
+      { cat: "NBA", title: "Conference Finals: the printable path to the title", excerpt: "Two series, four teams, one trophy. Print it and track every game.", who: "M. Reyes", when: "1 week ago", tint: "NBA" },
+      { cat: "How-To", title: "Run the perfect office pool (and actually get paid)", excerpt: "Buy-ins, payouts, and tiebreakers that won't blow up the group chat.", who: "The Crew", when: "2 weeks ago", tint: "POOL" }
+    ];
+    document.getElementById("postGrid").innerHTML = POSTS.map(function (p) {
+      return '<a class="post-card" href="blog.html" data-reveal><div class="thumb">' + p.tint + '</div>' +
+        '<div class="body"><span class="cat">' + p.cat + '</span><h3>' + p.title + '</h3>' +
+        '<p>' + p.excerpt + '</p><div class="meta"><span>' + p.who + '</span><span>·</span><span>' + p.when + '</span></div></div></a>';
+    }).join("");
+
+    /* ---- Newsletter (demo) ---- */
+    window.SB = window.SB || {};
+    SB.subscribe = function (e) {
+      e.preventDefault();
+      e.target.reset();
+      SB.toast("You're on the list! 🏆");
+      return false;
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bracket Banter — The Sports Brackets Blog</title>
+  <meta name="description" content="Predictions, printable drops, pool strategy, and hot takes from the Sports Brackets crew." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="blog">
+  <div data-mount="header"></div>
+
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="crumbs"><a href="index.html">Home</a> / Blog</div>
+      <span class="eyebrow">🎙️ Bracket Banter</span>
+      <h1>The blog</h1>
+      <p>Predictions, printable drops, pool strategy, and the occasional hot take. New posts before every major tournament.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="post-grid" id="allPosts"></div>
+    </div>
+  </section>
+
+  <div data-mount="footer"></div>
+
+  <script src="js/main.js"></script>
+  <script>
+    var POSTS = [
+      { cat: "World Cup", tint: "WC26", title: "How to fill out a 48-team World Cup bracket", excerpt: "The expanded format changes the math. Here's our group-by-group approach to a smarter bracket.", who: "Bracket Banter", when: "Jun 27, 2026" },
+      { cat: "NBA", tint: "NBA", title: "Conference Finals: the printable path to the title", excerpt: "Two series, four teams, one trophy. Print our bracket and track every possession.", who: "M. Reyes", when: "Jun 20, 2026" },
+      { cat: "How-To", tint: "POOL", title: "Run the perfect office pool (and actually get paid)", excerpt: "Buy-ins, payout splits, and tiebreakers that won't detonate the group chat.", who: "The Crew", when: "Jun 12, 2026" },
+      { cat: "MLB", tint: "MLB", title: "The low-ink guide to printing a full season schedule", excerpt: "Save a forest. Our printer settings cut ink use without losing readability.", who: "D. Okafor", when: "Jun 3, 2026" },
+      { cat: "NFL", tint: "NFL", title: "Reading the playoff picture three weeks out", excerpt: "Tiebreakers, magic numbers, and the seeds nobody's talking about yet.", who: "M. Reyes", when: "May 28, 2026" },
+      { cat: "Tools", tint: "TOOL", title: "New: Super Bowl Squares generator is live", excerpt: "Random fill, hidden numbers, one-sheet print. Built for the watch party.", who: "The Crew", when: "May 14, 2026" }
+    ];
+    document.getElementById("allPosts").innerHTML = POSTS.map(function (p) {
+      return '<a class="post-card" href="#" onclick="SB.toast(\'Full posts coming soon ✍️\');return false;" data-reveal>' +
+        '<div class="thumb">' + p.tint + '</div><div class="body"><span class="cat">' + p.cat + '</span>' +
+        '<h3>' + p.title + '</h3><p>' + p.excerpt + '</p>' +
+        '<div class="meta"><span>' + p.who + '</span><span>·</span><span>' + p.when + '</span></div></div></a>';
+    }).join("");
+  </script>
+</body>
+</html>

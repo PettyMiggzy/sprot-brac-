@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bracket Maker — Build &amp; Print a Tournament Bracket | Sports Brackets</title>
+  <meta name="description" content="Free single-elimination bracket maker for 4 to 32 teams. Enter teams, click to pick winners, then print a clean, low-ink bracket. Auto-saves in your browser." />
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body data-page="play">
+  <div data-mount="header"></div>
+
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="crumbs"><a href="../index.html">Home</a> / Play / Bracket Maker</div>
+      <span class="eyebrow">Free · No signup · Auto-saves</span>
+      <h1>Bracket Maker</h1>
+      <p>Drop in 4–32 teams, click a name to advance them, and print a clean single-elimination bracket. Your work saves automatically in this browser.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="tool-shell">
+        <!-- CONTROLS -->
+        <aside class="panel">
+          <h3>Setup</h3>
+          <div class="field">
+            <label for="tName">Bracket title</label>
+            <input id="tName" type="text" value="My Tournament" maxlength="48" />
+          </div>
+          <div class="field">
+            <label for="tSize">Bracket size</label>
+            <select id="tSize">
+              <option value="4">4 teams</option>
+              <option value="8" selected>8 teams</option>
+              <option value="16">16 teams</option>
+              <option value="32">32 teams</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="tTeams">Teams (one per line)</label>
+            <textarea id="tTeams" spellcheck="false"></textarea>
+            <p class="hint">Blank lines become “TBD”. Extra names past the bracket size are ignored.</p>
+          </div>
+          <div class="field">
+            <button class="btn btn--primary" style="width:100%" id="buildBtn">Build / Update bracket</button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <button class="btn btn--ghost btn--sm" id="seedBtn" title="Standard tournament seeding">Seed 1–N</button>
+            <button class="btn btn--ghost btn--sm" id="shuffleBtn">Shuffle</button>
+            <button class="btn btn--ghost btn--sm" id="resetBtn">Reset picks</button>
+            <button class="btn btn--ghost btn--sm" id="printBtn">🖨️ Print</button>
+          </div>
+          <p class="hint" id="saveNote" style="margin-top:14px">Saved locally moments ago.</p>
+        </aside>
+
+        <!-- BOARD -->
+        <div>
+          <div class="toolbar">
+            <strong id="boardTitle" style="font-size:1.15rem">My Tournament</strong>
+            <span class="pill win" id="champTag" style="display:none"></span>
+          </div>
+          <div class="bracket-board">
+            <div class="bracket" id="board"></div>
+          </div>
+          <p class="hint">Click the team you want to advance in each matchup. Click again to clear it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div data-mount="footer"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/bracket.js"></script>
+</body>
+</html>

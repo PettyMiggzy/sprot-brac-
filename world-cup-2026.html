@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2026 FIFA World Cup Hub — Printable Bracket, Schedule &amp; Fantasy | Sports Brackets</title>
+  <meta name="description" content="The complete 2026 FIFA World Cup hub: printable 48-team bracket, full match schedule across every time zone, group standings, and the fantasy pool with cash payouts." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="world cup 2026">
+  <div data-mount="header"></div>
+
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="crumbs"><a href="index.html">Home</a> / World Cup 2026</div>
+      <span class="eyebrow">⚽ Jun 11 – Jul 19, 2026 · USA · Canada · Mexico</span>
+      <h1>2026 FIFA World Cup Hub</h1>
+      <p>48 teams. 16 host cities. 104 matches. Everything you need to print the bracket, track the groups, and win your pool — in one place.</p>
+      <div class="hero-actions" style="margin-top:20px">
+        <a class="btn btn--primary" href="#bracket">Jump to Bracket</a>
+        <a class="btn btn--ghost" href="#schedule">Match Schedule</a>
+        <a class="btn btn--ghost" href="#fantasy">Fantasy Pool</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUICK FACTS -->
+  <section class="section">
+    <div class="wrap">
+      <div class="hub-grid">
+        <div class="hub-card" style="cursor:default"><div class="ico">🗓️</div><h3>Jun 11</h3><p>Opening match at Estadio Azteca, Mexico City.</p></div>
+        <div class="hub-card" style="cursor:default"><div class="ico">🌎</div><h3>16 Cities</h3><p>Across the United States, Canada &amp; Mexico.</p></div>
+        <div class="hub-card" style="cursor:default"><div class="ico">🏟️</div><h3>104 Matches</h3><p>Group stage of 12 groups into a 32-team knockout.</p></div>
+        <div class="hub-card" style="cursor:default"><div class="ico">🏆</div><h3>Jul 19</h3><p>Final at MetLife Stadium, New Jersey.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BRACKET -->
+  <section class="section section--alt" id="bracket">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">The Bracket</span>
+        <h2>Printable knockout bracket</h2>
+        <p>The Round of 32 through the Final. Print it low-ink, fill it in by hand, or build your own in the Bracket Maker.</p>
+      </div>
+      <div class="toolbar">
+        <button class="btn btn--primary btn--sm" onclick="window.print()">🖨️ Print this bracket</button>
+        <a class="btn btn--ghost btn--sm" href="play/bracket-maker.html">Open interactive Bracket Maker →</a>
+      </div>
+      <div class="bracket-board">
+        <div class="bracket" id="wcBracket"></div>
+      </div>
+      <p class="hint">Tip: set your printer to “Fit to page” and turn off headers/footers for a clean one-sheet bracket.</p>
+    </div>
+  </section>
+
+  <!-- GROUPS -->
+  <section class="section" id="groups">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Group Stage</span>
+        <h2>Group standings</h2>
+        <p>Sample seeding for all 12 groups — top two from each group plus the eight best third-place teams advance.</p>
+      </div>
+      <div id="groupGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px"></div>
+    </div>
+  </section>
+
+  <!-- SCHEDULE -->
+  <section class="section section--alt" id="schedule">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Broadcast Schedule</span>
+        <h2>Match schedule &amp; kickoff times</h2>
+        <p>Key fixtures with kickoff in U.S. Eastern. Switch your local time at print.</p>
+      </div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Date</th><th>Round</th><th>Match</th><th>Venue</th><th>Kickoff (ET)</th><th>TV</th></tr></thead>
+          <tbody id="schedRows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- FANTASY -->
+  <section class="section" id="fantasy">
+    <div class="wrap">
+      <div class="feature">
+        <div>
+          <span class="tag">💸 Fantasy · Cash payouts</span>
+          <h2>Run your World Cup pool with us</h2>
+          <p>Invite the group, lock your picks before kickoff, and let the leaderboard sort out bragging rights. Top three split the pot — we handle the scoring.</p>
+          <div class="feature-actions">
+            <a class="btn btn--primary" href="#" onclick="SB.toast('Pools open closer to kickoff ⚽'); return false;">Create a Pool</a>
+            <a class="btn btn--light" href="#schedule">See the schedule</a>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="row"><b>🥇 1st place</b><span class="when">60% of pot</span></div>
+          <div class="row"><b>🥈 2nd place</b><span class="when">25% of pot</span></div>
+          <div class="row"><b>🥉 3rd place</b><span class="when">15% of pot</span></div>
+          <div class="row"><b>Scoring</b><span class="when">Group + knockout + golden boot bonus</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div data-mount="footer"></div>
+
+  <script src="js/main.js"></script>
+  <script>
+    /* ---- Knockout bracket (illustrative seeding) ---- */
+    var R32_LEFT = ["Argentina","Poland","France","Senegal","Spain","Japan","England","Mexico"];
+    var R32_RIGHT = ["Brazil","Croatia","Portugal","Morocco","Germany","USA","Netherlands","Canada"];
+
+    function col(title, teams, winners) {
+      var matches = "";
+      for (var i = 0; i < teams.length; i += (winners ? 1 : 2)) {
+        if (winners) {
+          matches += '<div class="match"><div class="slot picked"><span class="seed">·</span><span class="nm">' + teams[i] + '</span></div></div>';
+        } else {
+          matches += '<div class="match">' +
+            '<div class="slot"><span class="seed">' + (i + 1) + '</span><span class="nm">' + teams[i] + '</span></div>' +
+            '<div class="slot"><span class="seed">' + (i + 2) + '</span><span class="nm">' + teams[i + 1] + '</span></div></div>';
+        }
+      }
+      return '<div class="round"><div class="round-title">' + title + '</div>' + matches + '</div>';
+    }
+
+    var wc = "";
+    wc += col("Round of 32", R32_LEFT.slice(0,8), false);
+    wc += col("Round of 16", ["Argentina","France","Spain","England"], true);
+    wc += col("Quarterfinal", ["Argentina","Spain"], true);
+    wc += '<div class="round"><div class="round-title">Final</div>' +
+          '<div class="champion-box"><div class="lbl">Champion</div><div class="nm">Your pick</div></div></div>';
+    wc += col("Quarterfinal", ["Brazil","Germany"], true);
+    wc += col("Round of 16", ["Brazil","Portugal","Germany","Netherlands"], true);
+    wc += col("Round of 32", R32_RIGHT.slice(0,8), false);
+    document.getElementById("wcBracket").innerHTML = wc;
+
+    /* ---- Groups ---- */
+    var GROUPS = {
+      "Group A": [["Mexico",6],["Poland",4],["Saudi Arabia",1],["New Zealand",1]],
+      "Group B": [["Canada",7],["Belgium",5],["Ecuador",3],["Qatar",0]],
+      "Group C": [["Argentina",9],["Australia",4],["Nigeria",3],["Iran",1]],
+      "Group D": [["USA",7],["Wales",4],["Senegal",3],["Tunisia",2]],
+      "Group E": [["Spain",6],["Japan",6],["Egypt",2],["Costa Rica",1]],
+      "Group F": [["France",7],["Denmark",5],["Ghana",2],["Honduras",1]]
+    };
+    document.getElementById("groupGrid").innerHTML = Object.keys(GROUPS).map(function (g) {
+      var rows = GROUPS[g].map(function (t, i) {
+        var adv = i < 2 ? ' style="font-weight:700"' : '';
+        return '<tr' + adv + '><td>' + (i + 1) + '</td><td class="team">' + t[0] + '</td><td>' + t[1] + '</td></tr>';
+      }).join("");
+      return '<div class="table-wrap"><table class="data"><thead><tr><th colspan="3" style="color:var(--accent)">' + g +
+        '</th></tr><tr><th>#</th><th>Team</th><th>Pts</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+    }).join("");
+
+    /* ---- Schedule ---- */
+    var SCHED = [
+      ["Jun 11","Opening","Mexico vs TBD","Estadio Azteca","8:00 PM","FOX"],
+      ["Jun 12","Group","Canada vs TBD","BMO Field","6:00 PM","FS1"],
+      ["Jun 12","Group","USA vs TBD","SoFi Stadium","9:00 PM","FOX"],
+      ["Jun 28","Round of 32","TBD vs TBD","MetLife Stadium","3:00 PM","FOX"],
+      ["Jul 4","Round of 16","TBD vs TBD","AT&T Stadium","4:00 PM","FOX"],
+      ["Jul 11","Quarterfinal","TBD vs TBD","Mercedes-Benz Stadium","3:00 PM","FOX"],
+      ["Jul 14","Semifinal","TBD vs TBD","AT&T Stadium","3:00 PM","FOX"],
+      ["Jul 19","Final","TBD vs TBD","MetLife Stadium","3:00 PM","FOX"]
+    ];
+    document.getElementById("schedRows").innerHTML = SCHED.map(function (r) {
+      var pill = r[1] === "Final" ? ' <span class="pill win">★</span>' : "";
+      return '<tr><td>' + r[0] + '</td><td>' + r[1] + pill + '</td><td class="team">' + r[2] +
+        '</td><td>' + r[3] + '</td><td>' + r[4] + '</td><td>' + r[5] + '</td></tr>';
+    }).join("");
+  </script>
+</body>
+</html>
