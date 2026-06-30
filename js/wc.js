@@ -42,6 +42,11 @@
     "Group F": [["France", 7], ["Denmark", 5], ["Ghana", 2], ["Honduras", 1]]
   };
 
+  var SAMPLE_SCORERS = [
+    ["K. Mbappé", "France", 6, 2], ["L. Messi", "Argentina", 5, 3], ["H. Kane", "England", 5, 1],
+    ["V. Osimhen", "Nigeria", 4, 0], ["P. Foden", "England", 3, 4], ["J. Álvarez", "Argentina", 3, 2]
+  ];
+
   var SAMPLE_SCHED = [
     ["Jun 11", "Opening", "Mexico vs TBD", "Estadio Azteca", "8:00 PM", "FOX"],
     ["Jun 12", "Group", "Canada vs TBD", "BMO Field", "6:00 PM", "FS1"],
@@ -83,6 +88,29 @@
         '<td class="team" style="border-left:3px solid ' + accent + '">' + r[2] + '</td>' +
         '<td>' + r[3] + '</td><td>' + r[4] + '</td><td>' + r[5] + '</td></tr>';
     }).join("");
+  }
+
+  // scorers: array of [player, team, goals, assists]
+  function renderScorers(rows) {
+    var el = $("scorerRows");
+    if (!el) return;
+    el.innerHTML = rows.map(function (s, i) {
+      return '<tr><td>' + (i + 1) + '</td><td class="team">' + s[0] + '</td>' +
+        '<td style="border-left:3px solid ' + colorFor(s[1]) + '">' + s[1] + '</td>' +
+        '<td><b>' + s[2] + '</b></td><td>' + (s[3] != null ? s[3] : "—") + '</td></tr>';
+    }).join("");
+  }
+  function mapScorers(data) {
+    var list = data && data.scorers;
+    if (!Array.isArray(list) || !list.length) return null;
+    return list.slice(0, 10).map(function (s) {
+      return [
+        (s.player && s.player.name) || "—",
+        (s.team && (s.team.shortName || s.team.name)) || "—",
+        s.goals != null ? s.goals : 0,
+        s.assists
+      ];
+    });
   }
 
   // Sample/static bracket (used until knockout matches exist)
@@ -267,7 +295,12 @@
       if (d && mapBracket(d.matches)) gotLive = true;
     }).catch(function () { /* keep sample */ });
 
-    return Promise.all([pStand, pMatch]).then(function () {
+    var pScore = fetchResource("scorers").then(function (d) {
+      var rows = mapScorers(d);
+      if (rows) { renderScorers(rows); gotLive = true; }
+    }).catch(function () { /* keep sample */ });
+
+    return Promise.all([pStand, pMatch, pScore]).then(function () {
       setStatus(gotLive ? "live" : "sample");
       return gotLive;
     });
@@ -283,6 +316,7 @@
       return { name: name, rows: SAMPLE_GROUPS[name] };
     }));
     renderSchedule(SAMPLE_SCHED);
+    renderScorers(SAMPLE_SCORERS);
     renderSampleBracket();
     setStatus("checking");
 

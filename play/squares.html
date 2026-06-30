@@ -19,6 +19,8 @@
     .squares .corner { background: var(--ink); color: #fff; font-size: .68rem; }
     .squares .axis-team { background: var(--accent); color: #fff; letter-spacing: .04em; }
     .squares td.cell.mine { background: rgba(47,109,246,.1); }
+    .squares td.cell.qwin { background: rgba(245,158,11,.22); box-shadow: inset 0 0 0 2px var(--accent-3); font-weight: 800; position: relative; }
+    .squares td.cell.qwin span.q { position: absolute; top: 2px; left: 3px; font-size: .58rem; color: var(--accent-3); font-weight: 800; }
   </style>
 </head>
 <body data-page="play">
@@ -72,6 +74,18 @@ Taylor</textarea>
             <table class="squares" id="grid"></table>
           </div>
           <p class="hint">Tip: each filled square shows a player. After the draw, the winning square is the one matching each team's last-digit score per quarter.</p>
+
+          <!-- Winning-square scorer -->
+          <div class="panel" id="scorePanel" style="margin-top:22px;display:none">
+            <h3>Score the game → find the winners</h3>
+            <p class="hint" style="margin-top:0">Enter each team's running score at the end of each period. The winning square (and player) lights up automatically.</p>
+            <div class="table-wrap" style="margin-top:14px">
+              <table class="data">
+                <thead><tr><th>Period</th><th id="scHeadA">Team A</th><th id="scHeadB">Team B</th><th>Winning square</th></tr></thead>
+                <tbody id="scoreRows"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -106,12 +120,48 @@ Taylor</textarea>
       SB.toast("Squares filled — now draw the numbers.");
     }
 
+    var PERIODS = ["Q1", "Q2", "Q3", "Final"];
+    var winCells = {}; // "r,c" -> period label
+
     function draw() {
       if (!assigned) { SB.toast("Fill the squares first."); return; }
       colNums = shuffle([0,1,2,3,4,5,6,7,8,9].slice());
       rowNums = shuffle([0,1,2,3,4,5,6,7,8,9].slice());
+      winCells = {};
+      buildScorePanel();
       render();
       SB.toast("Numbers drawn. Good luck!");
+    }
+
+    function buildScorePanel() {
+      $("scHeadA").textContent = $("teamA").value || "Team A";
+      $("scHeadB").textContent = $("teamB").value || "Team B";
+      $("scoreRows").innerHTML = PERIODS.map(function (p, i) {
+        return '<tr><td class="team">' + p + '</td>' +
+          '<td><input type="number" min="0" class="sc" data-i="' + i + '" data-side="a" style="width:70px;padding:6px 8px;border:1px solid var(--line);border-radius:7px" /></td>' +
+          '<td><input type="number" min="0" class="sc" data-i="' + i + '" data-side="b" style="width:70px;padding:6px 8px;border:1px solid var(--line);border-radius:7px" /></td>' +
+          '<td id="win' + i + '" class="muted">—</td></tr>';
+      }).join("");
+      $("scorePanel").style.display = "";
+    }
+
+    function computeWinners() {
+      if (!colNums) return;
+      winCells = {};
+      PERIODS.forEach(function (p, i) {
+        var aEl = document.querySelector('.sc[data-i="' + i + '"][data-side="a"]');
+        var bEl = document.querySelector('.sc[data-i="' + i + '"][data-side="b"]');
+        var out = document.getElementById("win" + i);
+        if (aEl.value === "" || bEl.value === "") { out.textContent = "—"; out.className = "muted"; return; }
+        var aDigit = Math.abs(parseInt(aEl.value, 10)) % 10;
+        var bDigit = Math.abs(parseInt(bEl.value, 10)) % 10;
+        var c = colNums.indexOf(aDigit), r = rowNums.indexOf(bDigit);
+        if (c < 0 || r < 0 || !assigned) { out.textContent = "—"; return; }
+        winCells[r + "," + c] = p;
+        out.innerHTML = '<b>' + (assigned[r][c] || "—") + '</b> <span class="muted">(' + aDigit + '-' + bDigit + ')</span>';
+        out.className = "";
+      });
+      render();
     }
 
     function render() {
@@ -136,7 +186,10 @@ Taylor</textarea>
         html += '<td class="axis">' + (drawn ? rowNums[r] : "?") + '</td>';
         for (var c2 = 0; c2 < 10; c2++) {
           var who = assigned ? assigned[r][c2] : "";
-          html += '<td class="cell">' + who + '</td>';
+          var wp = winCells[r + "," + c2];
+          var cls = "cell" + (wp ? " qwin" : "");
+          var tag = wp ? '<span class="q">' + wp + '</span>' : "";
+          html += '<td class="' + cls + '">' + tag + who + '</td>';
         }
         html += '</tr>';
       }
@@ -146,8 +199,16 @@ Taylor</textarea>
     $("fillBtn").addEventListener("click", fill);
     $("drawBtn").addEventListener("click", draw);
     $("printBtn").addEventListener("click", function () { window.print(); });
-    $("teamA").addEventListener("input", render);
-    $("teamB").addEventListener("input", render);
+    function syncScoreHeaders() {
+      if ($("scHeadA")) $("scHeadA").textContent = $("teamA").value || "Team A";
+      if ($("scHeadB")) $("scHeadB").textContent = $("teamB").value || "Team B";
+    }
+    $("teamA").addEventListener("input", function () { render(); syncScoreHeaders(); });
+    $("teamB").addEventListener("input", function () { render(); syncScoreHeaders(); });
+    // Live winning-square calculation as scores are typed
+    document.addEventListener("input", function (e) {
+      if (e.target && e.target.classList && e.target.classList.contains("sc")) computeWinners();
+    });
 
     fill();
   </script>
