@@ -20,13 +20,10 @@
   var ROOT = inSub ? "../" : "./";
 
   var NAV = [
-    { label: "MLB", href: "schedules.html#mlb" },
-    { label: "Basketball", href: "schedules.html#nba" },
-    { label: "NFL", href: "schedules.html#nfl" },
-    { label: "NCAA", href: "schedules.html#ncaa" },
+    { label: "Scores", href: "schedules.html" },
     { label: "World Cup", href: "world-cup-2026.html" },
     { label: "Fantasy", href: "fantasy.html" },
-    { label: "$BRACKETS", href: "brackets.html" },
+    { label: "$BRACKETS", href: "brackets.html", token: true },
     { label: "Play", href: "play/bracket-maker.html" },
     { label: "Blog", href: "blog.html" }
   ];
@@ -40,8 +37,12 @@
   function buildHeader() {
     var page = (document.body.getAttribute("data-page") || "");
     var links = NAV.map(function (n) {
-      var active = n.label.toLowerCase().indexOf(page) === 0 || page === n.href ? " class=\"active\"" : "";
-      return '<a href="' + ROOT + n.href + '"' + active + '>' + n.label + '</a>';
+      var isActive = n.label.toLowerCase().indexOf(page) === 0 || page === n.href;
+      var cls = [];
+      if (isActive) cls.push("active");
+      if (n.token) cls.push("nav-token");
+      var attr = cls.length ? ' class="' + cls.join(" ") + '"' : "";
+      return '<a href="' + ROOT + n.href + '"' + attr + '>' + n.label + '</a>';
     }).join("");
 
     return '' +
