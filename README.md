@@ -16,6 +16,8 @@ anywhere (GitHub Pages, Netlify, Vercel, S3, or any plain web server).
 | `index.html` | Landing page — hero, World Cup feature, sport hubs, tools, blog teasers, newsletter |
 | `world-cup-2026.html` | 2026 FIFA World Cup hub — printable 48-team knockout bracket, group standings, broadcast schedule, fantasy pool |
 | `schedules.html` | Tabbed standings + schedules for MLB / NBA / NFL / NCAA / Global, with **live-feed upgrade** + team colors |
+| `fantasy.html` | World Cup **fantasy hub** — interactive squad builder (budget, formations, captain, max 3/country), entry tiers, scoring, links to the play-to-earn app |
+| `brackets.html` | **$BRACKETS token** page (Solana) — live DexScreener price/stats + embedded chart, copy-CA, how-to-buy, tokenomics, X/Telegram |
 | `play/bracket-maker.html` | **Interactive bracket maker** — 4–64 teams, presets, click to advance, **share link**, **PNG export**, auto-saves, print |
 | `play/squares.html` | **Super Bowl Squares generator** — random 100-square fill + hidden number draw, print-ready |
 | `play/round-robin.html` | **Round-robin generator** — every team plays everyone, single or double, printable |
@@ -83,6 +85,7 @@ directory set to the project root.
 │   └── pickem.html
 ├── api/
 │   ├── sports.js           # serverless proxy for all live league data
+│   ├── token.js            # DexScreener proxy for the $BRACKETS token
 │   ├── og.js               # @vercel/og — dynamic bracket preview image (edge)
 │   └── share.js            # shareable link w/ per-bracket OG meta + redirect
 ├── package.json            # only @vercel/og (for the OG function); no build step
@@ -91,6 +94,8 @@ directory set to the project root.
 │   ├── main.js             # shared header/footer, nav, theme toggle, toast, reveal
 │   ├── data.js             # team colors + sample data + proxy fetch & mappers
 │   ├── wc.js               # World Cup hub: live groups/schedule/bracket mapping
+│   ├── fantasy.js          # World Cup fantasy squad builder
+│   ├── token.js            # $BRACKETS live market data (DexScreener)
 │   └── bracket.js          # bracket engine, presets, share-link, PNG export
 ├── assets/                 # logo + favicon (SVG)
 ├── robots.txt · sitemap.xml · .nojekyll

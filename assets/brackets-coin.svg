@@ -1,0 +1,20 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="$BRACKETS coin">
+  <defs>
+    <linearGradient id="sol" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9945FF"/>
+      <stop offset="1" stop-color="#14F195"/>
+    </linearGradient>
+    <radialGradient id="shine" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.35"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="100" cy="100" r="94" fill="#0b0f1d"/>
+  <circle cx="100" cy="100" r="94" fill="none" stroke="url(#sol)" stroke-width="8"/>
+  <circle cx="100" cy="100" r="80" fill="#10152a"/>
+  <!-- bracket motif -->
+  <path d="M70 62 H52 V138 H70" fill="none" stroke="#2f6df6" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M130 62 H148 V138 H130" fill="none" stroke="#14F195" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="100" y="113" font-family="Inter, sans-serif" font-size="46" font-weight="900" fill="#ffffff" text-anchor="middle">$B</text>
+  <circle cx="100" cy="100" r="80" fill="url(#shine)"/>
+</svg>

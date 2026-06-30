@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BRACKETS Fantasy — 2026 World Cup Play-to-Earn Fantasy Football | Sports Brackets</title>
+  <meta name="description" content="Build your 2026 World Cup fantasy squad, pick a captain and formation, and compete for USDC prize pools. Free and premium tiers. Draft your XI here, then play on the app." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="canonical" href="https://sportsbrackets.net/fantasy.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="BRACKETS Fantasy — 2026 World Cup Play-to-Earn Fantasy" />
+  <meta property="og:description" content="Draft your World Cup XI, pick a captain, and compete for USDC prize pools. Free & premium tiers." />
+  <meta property="og:image" content="https://sportsbrackets.net/api/og" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <style>
+    .tier-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .tier { border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; background: #fff; box-shadow: var(--shadow-sm); position: relative; }
+    [data-theme="dark"] .tier { background: var(--bg-alt); }
+    .tier.featured { border-color: var(--accent-3); box-shadow: 0 0 0 2px rgba(245,158,11,.25), var(--shadow); }
+    .tier .badge { position: absolute; top: -11px; right: 18px; background: var(--accent-3); color: #1c1206; font-size: .7rem; font-weight: 800; padding: 3px 10px; border-radius: 999px; letter-spacing: .04em; }
+    .tier h3 { font-size: 1.2rem; }
+    .tier .price { font-size: 2.4rem; font-weight: 900; letter-spacing: -.03em; margin: 6px 0; }
+    .tier .price small { font-size: 1rem; color: var(--ink-mute); font-weight: 700; }
+    .tier ul li { display: flex; gap: 9px; padding: 7px 0; font-size: .94rem; color: var(--ink-soft); }
+    .tier ul li::before { content: "✓"; color: var(--accent-2); font-weight: 800; }
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .step { border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; background: #fff; box-shadow: var(--shadow-sm); }
+    [data-theme="dark"] .step { background: var(--bg-alt); }
+    .step .n { width: 34px; height: 34px; border-radius: 10px; background: var(--accent); color: #fff; font-weight: 800; display: grid; place-items: center; margin-bottom: 12px; }
+    .step h4 { font-size: 1rem; }
+    .step p { font-size: .88rem; color: var(--ink-mute); margin-top: 4px; }
+
+    /* Squad builder */
+    .squad-shell { display: grid; grid-template-columns: 1.25fr .9fr; gap: 24px; align-items: start; }
+    .pitch { background: linear-gradient(160deg, #14803f, #0c5f2c); border-radius: var(--radius); padding: 22px 14px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+    .pitch::before { content: ""; position: absolute; inset: 14px; border: 2px solid rgba(255,255,255,.18); border-radius: 10px; pointer-events: none; }
+    .pitch::after { content: ""; position: absolute; top: 50%; left: 14px; right: 14px; height: 0; border-top: 2px solid rgba(255,255,255,.14); }
+    .pitch-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; position: relative; z-index: 1; margin: 10px 0; }
+    .pslot { width: 86px; min-height: 78px; border-radius: 9px; background: rgba(255,255,255,.1); border: 1.5px dashed rgba(255,255,255,.35); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; transition: .15s; padding: 6px 4px; text-align: center; }
+    .pslot:hover { background: rgba(255,255,255,.18); border-color: #fff; }
+    .pslot.filled { background: #fff; border-style: solid; border-color: #fff; cursor: default; }
+    [data-theme="dark"] .pslot.filled { background: #11151f; }
+    .pslot.active { box-shadow: 0 0 0 3px var(--accent-3); }
+    .pslot .pos { font-size: .62rem; font-weight: 800; letter-spacing: .06em; color: rgba(255,255,255,.8); }
+    .pslot.filled .pos { color: var(--ink-mute); }
+    .pslot .nm { font-size: .76rem; font-weight: 700; color: var(--ink); line-height: 1.1; }
+    .pslot .meta2 { font-size: .64rem; color: var(--ink-mute); }
+    .pslot .swatch { width: 18px; height: 6px; border-radius: 3px; }
+    .pslot .acts { display: flex; gap: 4px; margin-top: 2px; }
+    .pslot .acts button { border: 0; border-radius: 5px; width: 20px; height: 18px; font-size: .62rem; font-weight: 800; cursor: pointer; line-height: 1; }
+    .cbtn { background: var(--bg-alt); color: var(--ink-soft); }
+    .cbtn.on { background: var(--accent-3); color: #1c1206; }
+    .xbtn { background: rgba(220,38,38,.12); color: var(--danger); }
+
+    .builder-side .stat-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--line-soft); font-size: .92rem; }
+    .builder-side .stat-row b { font-weight: 800; }
+    .valid { color: var(--accent-2); } .invalid { color: var(--danger); }
+    .pl-filters { display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0; }
+    .pl-filters button { padding: 6px 12px; border: 1px solid var(--line); background: #fff; border-radius: 999px; font-size: .82rem; font-weight: 700; color: var(--ink-soft); }
+    [data-theme="dark"] .pl-filters button { background: var(--bg-alt); }
+    .pl-filters button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .pl-list { max-height: 360px; overflow-y: auto; border: 1px solid var(--line); border-radius: var(--radius-sm); }
+    .pl-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-bottom: 1px solid var(--line-soft); font-size: .88rem; }
+    .pl-row:last-child { border-bottom: 0; }
+    .pl-row .nm { font-weight: 700; flex: 1; }
+    .pl-row .ct { color: var(--ink-mute); font-size: .78rem; }
+    .pl-row .pr { font-weight: 800; min-width: 46px; text-align: right; }
+    .pl-row button { border: 0; background: var(--accent); color: #fff; border-radius: 7px; padding: 5px 11px; font-weight: 700; font-size: .8rem; }
+    .pl-row button:disabled { background: var(--line); color: var(--ink-mute); cursor: not-allowed; }
+    .pl-row.picked { opacity: .5; }
+    @media (max-width: 880px) { .squad-shell { grid-template-columns: 1fr; } .tier-grid { grid-template-columns: 1fr; } .steps { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body data-page="fantasy">
+  <div data-mount="header"></div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div data-reveal>
+          <span class="eyebrow">⚽ BRACKETS Fantasy · 2026 World Cup</span>
+          <h1>Draft your XI. <span>Win the pot.</span></h1>
+          <p class="lead">Play-to-earn fantasy football for the 2026 FIFA World Cup. Build a squad, name your captain, and climb the leaderboard for USDC prize pools — free and premium tiers.</p>
+          <div class="hero-actions">
+            <a class="btn btn--primary" href="#builder">Build your squad</a>
+            <a class="btn btn--light" href="https://fantasy.sportsbrackets.net/" target="_blank" rel="noopener">Play on the app ↗</a>
+          </div>
+          <div class="hero-stats">
+            <div><b>48</b><span>TEAMS</span></div>
+            <div><b>104</b><span>MATCHES</span></div>
+            <div><b>$1,000</b><span>FREE PRIZE POOL</span></div>
+          </div>
+        </div>
+        <div class="hero-card" data-reveal>
+          <h4>Prize pool · Free league</h4>
+          <div class="feature-card" style="background:rgba(255,255,255,.06);border:0;padding:0">
+            <div class="row"><b>🥇 1st place</b><span class="when">$340 USDC</span></div>
+            <div class="row"><b>🥈 2nd place</b><span class="when">$180 USDC</span></div>
+            <div class="row"><b>🥉 3rd place</b><span class="when">$110 USDC</span></div>
+            <div class="row"><b>4th–10th</b><span class="when">split the rest</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">How it works</span>
+        <h2>Four steps to your squad</h2>
+        <p>Free to play, quick to set up. Build here, then take your XI to the app to lock it in.</p>
+      </div>
+      <div class="steps">
+        <div class="step" data-reveal><div class="n">1</div><h4>Connect</h4><p>Sign in with a social account or crypto wallet to join a league.</p></div>
+        <div class="step" data-reveal><div class="n">2</div><h4>Build your squad</h4><p>Spend your budget on 11 players — max 3 from any one country.</p></div>
+        <div class="step" data-reveal><div class="n">3</div><h4>Captain &amp; formation</h4><p>Pick a captain for double points and set your formation.</p></div>
+        <div class="step" data-reveal><div class="n">4</div><h4>Earn</h4><p>Score as your players perform. Top finishers split the USDC pool.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SQUAD BUILDER -->
+  <section class="section section--alt" id="builder">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Squad Builder</span>
+        <h2>Build your World Cup XI</h2>
+        <p>A free strategy sandbox: pick a formation, draft within budget, choose your captain. Saves in your browser — share it with the group.</p>
+      </div>
+
+      <div class="squad-shell">
+        <!-- Pitch -->
+        <div>
+          <div class="toolbar">
+            <strong id="squadName" style="font-size:1.1rem">My XI</strong>
+            <span class="pill" id="squadValid">0 / 11 picked</span>
+          </div>
+          <div class="pitch" id="pitch"></div>
+          <p class="hint">Click an empty slot, then pick a player from the list. Use ★ for captain (2× points) and ✕ to remove.</p>
+        </div>
+
+        <!-- Controls + player list -->
+        <div class="builder-side">
+          <div class="panel">
+            <div class="field" style="margin-bottom:12px">
+              <label for="formation">Formation</label>
+              <select id="formation">
+                <option value="4-3-3">4-3-3</option>
+                <option value="4-4-2">4-4-2</option>
+                <option value="3-5-2">3-5-2</option>
+                <option value="3-4-3">3-4-3</option>
+                <option value="5-3-2">5-3-2</option>
+                <option value="5-4-1">5-4-1</option>
+              </select>
+            </div>
+            <div class="stat-row"><span>Budget</span><b id="budget">£100.0m</b></div>
+            <div class="stat-row"><span>Remaining</span><b id="remaining">£100.0m</b></div>
+            <div class="stat-row"><span>Captain</span><b id="captainName">—</b></div>
+            <div class="stat-row"><span>Status</span><b id="statusTxt" class="invalid">Incomplete</b></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
+              <button class="btn btn--ghost btn--sm" id="autoBtn">⚡ Auto-pick</button>
+              <button class="btn btn--ghost btn--sm" id="clearBtn">Clear</button>
+              <button class="btn btn--primary btn--sm" id="shareBtn">🔗 Share</button>
+              <a class="btn btn--ghost btn--sm" href="https://fantasy.sportsbrackets.net/" target="_blank" rel="noopener" style="text-align:center">Play ↗</a>
+            </div>
+          </div>
+
+          <div class="pl-filters" id="posFilters">
+            <button data-pos="ALL" class="on">All</button>
+            <button data-pos="GK">GK</button>
+            <button data-pos="DEF">DEF</button>
+            <button data-pos="MID">MID</button>
+            <button data-pos="FWD">FWD</button>
+          </div>
+          <div class="pl-list" id="playerList"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIERS -->
+  <section class="section" id="tiers">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Entry tiers</span>
+        <h2>Play free or premium</h2>
+        <p>Start free for a $1,000 pool, or enter premium teams for a bigger, growing prize pool paid in USDC.</p>
+      </div>
+      <div class="tier-grid">
+        <div class="tier" data-reveal>
+          <h3>Free League</h3>
+          <div class="price">$0<small> USDC</small></div>
+          <p class="muted" style="font-size:.9rem">One free squad per player. Perfect for the group chat.</p>
+          <ul style="margin-top:12px">
+            <li>$1,000 prize pool</li>
+            <li>Top 10 finishers paid</li>
+            <li>1st place: $340 USDC</li>
+            <li>Full season scoring</li>
+          </ul>
+          <a class="btn btn--ghost" style="width:100%;justify-content:center;margin-top:14px" href="https://fantasy.sportsbrackets.net/" target="_blank" rel="noopener">Join free ↗</a>
+        </div>
+        <div class="tier featured" data-reveal>
+          <span class="badge">BIGGER POOL</span>
+          <h3>Premium Teams</h3>
+          <div class="price">$10<small> USDC / team</small></div>
+          <p class="muted" style="font-size:.9rem">Enter as many teams as you like. Pool grows with entries.</p>
+          <ul style="margin-top:12px">
+            <li>65% of entries paid to winners</li>
+            <li>18 winning spots across 6 stages</li>
+            <li>Real-time growing prize pool</li>
+            <li>Stack your odds with multiple squads</li>
+          </ul>
+          <a class="btn btn--primary" style="width:100%;justify-content:center;margin-top:14px" href="https://fantasy.sportsbrackets.net/" target="_blank" rel="noopener">Enter premium ↗</a>
+        </div>
+      </div>
+      <p class="hint" style="margin-top:16px">Prizes are paid in USDC on the BRACKETS fantasy app. This page is a free strategy tool — head to the app to enter for real. Crypto entries involve risk; play responsibly.</p>
+    </div>
+  </section>
+
+  <!-- SCORING -->
+  <section class="section section--alt" id="scoring">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow">Scoring</span>
+        <h2>How points work</h2>
+        <p>Your players only score when their national team plays. Captain points are doubled.</p>
+      </div>
+      <div class="table-wrap" style="max-width:620px">
+        <table class="data">
+          <thead><tr><th>Action</th><th>GK / DEF</th><th>MID</th><th>FWD</th></tr></thead>
+          <tbody id="scoreTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div data-mount="footer"></div>
+
+  <script src="js/main.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/fantasy.js"></script>
+</body>
+</html>

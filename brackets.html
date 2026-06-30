@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>$BRACKETS — The Sports Brackets Token on Solana</title>
+  <meta name="description" content="$BRACKETS is the Solana token powering the Sports Brackets ecosystem. Live price &amp; chart, how to buy, and the community on X and Telegram." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="canonical" href="https://sportsbrackets.net/brackets.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="$BRACKETS — The Sports Brackets Token on Solana" />
+  <meta property="og:description" content="Live price, chart, and how to buy $BRACKETS on Solana. Join the community." />
+  <meta property="og:image" content="https://sportsbrackets.net/assets/brackets-coin.svg" />
+  <style>
+    body[data-page="token"] {
+      background:
+        radial-gradient(1100px 600px at 80% -10%, rgba(153,69,255,.28), transparent 60%),
+        radial-gradient(900px 500px at 0% 10%, rgba(20,241,149,.16), transparent 55%),
+        #070a16;
+      color: #eaf0ff;
+    }
+    body[data-page="token"] .site-header { background: rgba(7,10,22,.8); border-bottom-color: rgba(255,255,255,.08); }
+    body[data-page="token"] .nav-links a { color: #c2c9e0; }
+    body[data-page="token"] .nav-links a:hover { background: rgba(255,255,255,.06); color: #fff; }
+    body[data-page="token"] .brand { color: #fff; }
+    body[data-page="token"] .theme-toggle { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.12); color: #c2c9e0; }
+
+    .sol-grad { background: linear-gradient(90deg, #9945FF, #14F195); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .btn--sol { background: linear-gradient(90deg, #9945FF, #14F195); color: #08111a; font-weight: 800; border: 0; }
+    .btn--sol:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    .btn--tg { background: #229ED9; color: #fff; }
+    .btn--x { background: #111; color: #fff; border: 1px solid rgba(255,255,255,.2); }
+
+    .tk-hero { padding-block: clamp(40px, 7vw, 80px); }
+    .tk-grid { display: grid; grid-template-columns: 1fr 360px; gap: 44px; align-items: center; }
+    .tk-coin { width: 300px; max-width: 80vw; margin-inline: auto; filter: drop-shadow(0 0 50px rgba(153,69,255,.55)); animation: tk-float 5s ease-in-out infinite; }
+    @keyframes tk-float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-14px) } }
+    .tk-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: rgba(20,241,149,.12); border: 1px solid rgba(20,241,149,.4); color: #7df3c0; font-weight: 700; font-size: .82rem; }
+    .tk-hero h1 { font-size: clamp(2.6rem, 7vw, 4.6rem); letter-spacing: -.03em; margin: 16px 0 8px; }
+    .tk-hero p.lead { color: #b9c2e0; font-size: clamp(1.05rem, 2.4vw, 1.25rem); max-width: 520px; }
+
+    .ca-pill { display: flex; align-items: center; gap: 10px; margin-top: 22px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.14); border-radius: 12px; padding: 10px 12px; max-width: 520px; }
+    .ca-pill code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .82rem; color: #c2c9e0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+    .ca-pill button { flex: none; background: linear-gradient(90deg,#9945FF,#14F195); color: #08111a; border: 0; border-radius: 8px; padding: 7px 12px; font-weight: 800; font-size: .8rem; cursor: pointer; }
+
+    .price-row { display: flex; align-items: baseline; gap: 14px; margin-top: 22px; flex-wrap: wrap; }
+    .price-row .pv { font-size: 2.4rem; font-weight: 900; }
+    .chg { font-weight: 800; padding: 3px 10px; border-radius: 8px; font-size: .95rem; }
+    .chg.up { background: rgba(20,241,149,.15); color: #14F195; } .chg.down { background: rgba(255,90,110,.15); color: #ff6e7e; }
+
+    .tk-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+
+    .stat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
+    .scard { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); border-radius: 14px; padding: 18px; }
+    .scard .k { font-size: .74rem; text-transform: uppercase; letter-spacing: .08em; color: #8b95b8; font-weight: 700; }
+    .scard .v { font-size: 1.5rem; font-weight: 800; margin-top: 6px; }
+
+    .chart-wrap { position: relative; border: 1px solid rgba(255,255,255,.1); border-radius: 16px; overflow: hidden; background: #0a0f1f; aspect-ratio: 16 / 9; min-height: 420px; }
+    .chart-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .chart-fallback { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: #8b95b8; padding: 24px; }
+
+    .tk-section h2 { font-size: clamp(1.6rem, 3.5vw, 2.3rem); }
+    .tk-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .tk-step { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); border-radius: 14px; padding: 20px; }
+    .tk-step .n { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(90deg,#9945FF,#14F195); color: #08111a; font-weight: 900; display: grid; place-items: center; margin-bottom: 12px; }
+    .tk-step h4 { font-size: 1rem; } .tk-step p { color: #9aa3c4; font-size: .88rem; margin-top: 4px; }
+    .tk-step a { color: #7df3c0; font-weight: 700; }
+
+    .tomics { display: grid; grid-template-columns: 1.1fr .9fr; gap: 28px; align-items: center; }
+    .tomics .ring { aspect-ratio: 1; max-width: 320px; margin-inline: auto; border-radius: 50%; background: conic-gradient(#9945FF 0 55%, #14F195 55% 80%, #2f6df6 80% 100%); display: grid; place-items: center; }
+    .tomics .ring .hole { width: 58%; height: 58%; border-radius: 50%; background: #070a16; display: grid; place-items: center; text-align: center; }
+    .tlegend li { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-weight: 600; }
+    .tlegend .dot { width: 14px; height: 14px; border-radius: 4px; }
+
+    .community { text-align: center; background: linear-gradient(135deg, rgba(153,69,255,.18), rgba(20,241,149,.12)); border: 1px solid rgba(255,255,255,.12); border-radius: 20px; padding: clamp(28px,5vw,52px); }
+    .tk-disc { font-size: .82rem; color: #7c87aa; border-top: 1px solid rgba(255,255,255,.08); padding-top: 18px; }
+    @media (max-width: 880px) { .tk-grid, .tomics { grid-template-columns: 1fr; } .tk-steps { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body data-page="token">
+  <div data-mount="header"></div>
+
+  <!-- HERO -->
+  <section class="tk-hero">
+    <div class="wrap">
+      <div class="tk-grid">
+        <div data-reveal>
+          <span class="tk-badge">◎ Built on Solana</span>
+          <h1>$<span class="sol-grad">BRACKETS</span></h1>
+          <p class="lead">The community token powering the Sports Brackets ecosystem — brackets, pools, and play-to-earn fantasy, all on Solana.</p>
+
+          <div class="ca-pill">
+            <code id="caText">7V1KVUmGefA4qqsMTyebo3vxzvYK9xtpWLAmfiMWmoon</code>
+            <button id="copyCa">Copy CA</button>
+          </div>
+
+          <div class="price-row">
+            <span class="pv" id="price">$—</span>
+            <span class="chg" id="change">—</span>
+            <span class="muted" id="priceState" style="color:#8b95b8;font-size:.85rem">fetching live price…</span>
+          </div>
+
+          <div class="tk-actions">
+            <a class="btn btn--sol" id="buyLink" href="https://jup.ag/swap/SOL-7V1KVUmGefA4qqsMTyebo3vxzvYK9xtpWLAmfiMWmoon" target="_blank" rel="noopener">Buy on Jupiter ↗</a>
+            <a class="btn btn--x" href="https://x.com/sportbracketsol" target="_blank" rel="noopener">Follow on X</a>
+            <a class="btn btn--tg" href="https://t.me/sportsbrackets" target="_blank" rel="noopener">Telegram</a>
+            <a class="btn" id="dexLink" href="https://dexscreener.com/solana/7V1KVUmGefA4qqsMTyebo3vxzvYK9xtpWLAmfiMWmoon" target="_blank" rel="noopener" style="background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(255,255,255,.2)">DexScreener ↗</a>
+          </div>
+        </div>
+
+        <div data-reveal>
+          <img class="tk-coin" id="coinImg" src="assets/brackets-coin.svg" alt="$BRACKETS coin"
+               onerror="this.onerror=null;this.src='assets/brackets-coin.svg'" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIVE STATS -->
+  <section class="section tk-section">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow" style="color:#14F195">Live market</span>
+        <h2>$BRACKETS by the numbers</h2>
+        <p class="muted" style="color:#9aa3c4">Live data via DexScreener — updates automatically.</p>
+      </div>
+      <div class="stat-cards" data-reveal>
+        <div class="scard"><div class="k">Price</div><div class="v" id="s-price">—</div></div>
+        <div class="scard"><div class="k">24h Change</div><div class="v" id="s-change">—</div></div>
+        <div class="scard"><div class="k">Market Cap</div><div class="v" id="s-mcap">—</div></div>
+        <div class="scard"><div class="k">FDV</div><div class="v" id="s-fdv">—</div></div>
+        <div class="scard"><div class="k">Liquidity</div><div class="v" id="s-liq">—</div></div>
+        <div class="scard"><div class="k">24h Volume</div><div class="v" id="s-vol">—</div></div>
+        <div class="scard"><div class="k">24h Txns</div><div class="v" id="s-txns">—</div></div>
+        <div class="scard"><div class="k">Pair</div><div class="v" id="s-dex" style="font-size:1.1rem">—</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHART -->
+  <section class="section tk-section">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow" style="color:#9945FF">Chart</span>
+        <h2>Live price chart</h2>
+      </div>
+      <div class="chart-wrap" data-reveal>
+        <div class="chart-fallback" id="chartFallback">Loading chart from DexScreener…</div>
+        <iframe id="chartFrame" title="$BRACKETS price chart" loading="lazy"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW TO BUY -->
+  <section class="section tk-section">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow" style="color:#14F195">Get started</span>
+        <h2>How to buy $BRACKETS</h2>
+        <p class="muted" style="color:#9aa3c4">Four steps from zero to holding. Always verify the contract address above.</p>
+      </div>
+      <div class="tk-steps">
+        <div class="tk-step" data-reveal><div class="n">1</div><h4>Get a wallet</h4><p>Install <a href="https://phantom.app/" target="_blank" rel="noopener">Phantom</a> or Solflare on mobile or your browser.</p></div>
+        <div class="tk-step" data-reveal><div class="n">2</div><h4>Fund with SOL</h4><p>Buy SOL on any exchange and send it to your wallet address.</p></div>
+        <div class="tk-step" data-reveal><div class="n">3</div><h4>Swap for $BRACKETS</h4><p>Open <a href="https://jup.ag/swap/SOL-7V1KVUmGefA4qqsMTyebo3vxzvYK9xtpWLAmfiMWmoon" target="_blank" rel="noopener">Jupiter</a>, paste the CA, and swap.</p></div>
+        <div class="tk-step" data-reveal><div class="n">4</div><h4>Join the community</h4><p>Hop in <a href="https://t.me/sportsbrackets" target="_blank" rel="noopener">Telegram</a> and follow <a href="https://x.com/sportbracketsol" target="_blank" rel="noopener">@sportbracketsol</a>.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOKENOMICS -->
+  <section class="section tk-section">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow" style="color:#9945FF">Tokenomics</span>
+        <h2>Fair &amp; simple</h2>
+      </div>
+      <div class="tomics" data-reveal>
+        <div>
+          <p class="muted" style="color:#b9c2e0;font-size:1.05rem">$BRACKETS is a community-first token fueling the Sports Brackets world — printable brackets, pools, and World Cup fantasy. No team allocation games, liquidity locked, and rewards that flow back to holders and pool winners.</p>
+          <ul class="tlegend" style="margin-top:18px">
+            <li><span class="dot" style="background:#9945FF"></span> 55% — Liquidity &amp; market</li>
+            <li><span class="dot" style="background:#14F195"></span> 25% — Community rewards &amp; pools</li>
+            <li><span class="dot" style="background:#2f6df6"></span> 20% — Development &amp; treasury</li>
+          </ul>
+          <p class="hint" style="color:#7c87aa;margin-top:10px">Exact splits are placeholders — update with your official distribution.</p>
+        </div>
+        <div class="ring"><div class="hole"><div><div style="font-size:1.6rem;font-weight:900" id="t-supply">—</div><div class="muted" style="color:#8b95b8;font-size:.78rem">total supply</div></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMUNITY -->
+  <section class="section tk-section">
+    <div class="wrap">
+      <div class="community" data-reveal>
+        <h2 style="font-size:clamp(1.6rem,4vw,2.4rem)">Join the $BRACKETS community</h2>
+        <p class="muted" style="color:#c2c9e0;max-width:460px;margin:10px auto 22px">Alpha, giveaways, and bracket banter. Don't miss the next move.</p>
+        <div class="tk-actions" style="justify-content:center">
+          <a class="btn btn--x" href="https://x.com/sportbracketsol" target="_blank" rel="noopener">Follow @sportbracketsol</a>
+          <a class="btn btn--tg" href="https://t.me/sportsbrackets" target="_blank" rel="noopener">Join Telegram</a>
+          <a class="btn btn--sol" id="buyLink2" href="https://jup.ag/swap/SOL-7V1KVUmGefA4qqsMTyebo3vxzvYK9xtpWLAmfiMWmoon" target="_blank" rel="noopener">Buy $BRACKETS ↗</a>
+        </div>
+        <p class="tk-disc" style="margin-top:26px">$BRACKETS is a community meme/utility token on Solana. Nothing here is financial advice. Crypto is volatile and you can lose your entire purchase — only spend what you can afford to lose, and always verify the contract address before buying.</p>
+      </div>
+    </div>
+  </section>
+
+  <div data-mount="footer"></div>
+
+  <script src="js/main.js"></script>
+  <script src="js/token.js"></script>
+</body>
+</html>

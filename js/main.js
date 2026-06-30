@@ -24,7 +24,9 @@
     { label: "Basketball", href: "schedules.html#nba" },
     { label: "NFL", href: "schedules.html#nfl" },
     { label: "NCAA", href: "schedules.html#ncaa" },
-    { label: "World Cup 2026", href: "world-cup-2026.html" },
+    { label: "World Cup", href: "world-cup-2026.html" },
+    { label: "Fantasy", href: "fantasy.html" },
+    { label: "$BRACKETS", href: "brackets.html" },
     { label: "Play", href: "play/bracket-maker.html" },
     { label: "Blog", href: "blog.html" }
   ];
@@ -60,22 +62,24 @@
   function buildFooter() {
     var cols = [
       { h: "Schedules", links: [["MLB", "schedules.html#mlb"], ["NBA / WNBA", "schedules.html#nba"], ["NFL", "schedules.html#nfl"], ["NCAA", "schedules.html#ncaa"]] },
-      { h: "Play", links: [["Bracket Maker", "play/bracket-maker.html"], ["Super Bowl Squares", "play/squares.html"], ["Round-Robin", "play/round-robin.html"], ["Raffle &amp; Bingo", "play/raffle.html"], ["Pick'em Sheet", "play/pickem.html"]] },
-      { h: "Company", links: [["About", "index.html#about"], ["Newsletter", "index.html#newsletter"], ["Privacy", "#"], ["Contact", "mailto:hello@sportsbrackets.net"]] }
+      { h: "Play", links: [["Bracket Maker", "play/bracket-maker.html"], ["World Cup Fantasy", "fantasy.html"], ["Super Bowl Squares", "play/squares.html"], ["Round-Robin", "play/round-robin.html"], ["Pick'em Sheet", "play/pickem.html"]] },
+      { h: "Token &amp; Social", links: [["$BRACKETS", "brackets.html"], ["X / Twitter", "https://x.com/sportbracketsol"], ["Telegram", "https://t.me/sportsbrackets"], ["Contact", "mailto:hello@sportsbrackets.net"]] }
     ];
     var colHtml = cols.map(function (c) {
       return '<div><h4>' + c.h + '</h4>' + c.links.map(function (l) {
-        var href = /^(mailto:|#)/.test(l[1]) ? l[1] : ROOT + l[1];
-        return '<a href="' + href + '">' + l[0] + '</a>';
+        var ext = /^(https?:|mailto:|#)/.test(l[1]);
+        var href = ext ? l[1] : ROOT + l[1];
+        var attrs = /^https?:/.test(l[1]) ? ' target="_blank" rel="noopener"' : '';
+        return '<a href="' + href + '"' + attrs + '>' + l[0] + '</a>';
       }).join("") + '</div>';
     }).join("");
 
-    var social = function (label, path) {
-      return '<a href="#" aria-label="' + label + '"><svg viewBox="0 0 24 24" fill="currentColor">' + path + '</svg></a>';
+    var social = function (label, href, path) {
+      return '<a href="' + href + '" aria-label="' + label + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor">' + path + '</svg></a>';
     };
-    var x = social("X / Twitter", '<path d="M18.9 2H22l-7.3 8.3L23.3 22h-6.8l-5.3-6.9L5.1 22H2l7.8-8.9L1.7 2h7l4.8 6.3L18.9 2Zm-1.2 18h1.9L7.4 4H5.4l12.3 16Z"/>');
-    var yt = social("YouTube", '<path d="M23 12s0-3.2-.4-4.7a2.5 2.5 0 0 0-1.7-1.7C19.3 5.2 12 5.2 12 5.2s-7.3 0-8.9.4A2.5 2.5 0 0 0 1.4 7.3C1 8.8 1 12 1 12s0 3.2.4 4.7a2.5 2.5 0 0 0 1.7 1.7c1.6.4 8.9.4 8.9.4s7.3 0 8.9-.4a2.5 2.5 0 0 0 1.7-1.7C23 15.2 23 12 23 12Zm-13 3V9l5.2 3-5.2 3Z"/>');
-    var pin = social("Pinterest", '<path d="M12 2a10 10 0 0 0-3.6 19.3c-.1-.8-.2-2 0-2.9l1.2-5s-.3-.6-.3-1.5c0-1.4.8-2.5 1.9-2.5.9 0 1.3.7 1.3 1.5 0 .9-.6 2.2-.9 3.5-.2 1 .5 1.8 1.5 1.8 1.8 0 3.1-2.4 3.1-5 0-2-1.4-3.7-3.9-3.7a4.2 4.2 0 0 0-4.4 4.2c0 .8.3 1.4.6 1.8.1.1.1.2.1.4l-.3 1.2c0 .2-.2.3-.4.2-1.1-.5-1.8-2.1-1.8-3.4 0-2.8 2-5.3 5.9-5.3 3.1 0 5.5 2.2 5.5 5.2 0 3.1-1.9 5.5-4.7 5.5-.9 0-1.8-.5-2.1-1l-.6 2.2c-.2.8-.8 1.9-1.2 2.5A10 10 0 1 0 12 2Z"/>');
+    var x = social("X / Twitter", "https://x.com/javanx3d", '<path d="M18.9 2H22l-7.3 8.3L23.3 22h-6.8l-5.3-6.9L5.1 22H2l7.8-8.9L1.7 2h7l4.8 6.3L18.9 2Zm-1.2 18h1.9L7.4 4H5.4l12.3 16Z"/>');
+    var yt = social("YouTube", "https://www.youtube.com/", '<path d="M23 12s0-3.2-.4-4.7a2.5 2.5 0 0 0-1.7-1.7C19.3 5.2 12 5.2 12 5.2s-7.3 0-8.9.4A2.5 2.5 0 0 0 1.4 7.3C1 8.8 1 12 1 12s0 3.2.4 4.7a2.5 2.5 0 0 0 1.7 1.7c1.6.4 8.9.4 8.9.4s7.3 0 8.9-.4a2.5 2.5 0 0 0 1.7-1.7C23 15.2 23 12 23 12Zm-13 3V9l5.2 3-5.2 3Z"/>');
+    var pin = social("Pinterest", "https://www.pinterest.com/", '<path d="M12 2a10 10 0 0 0-3.6 19.3c-.1-.8-.2-2 0-2.9l1.2-5s-.3-.6-.3-1.5c0-1.4.8-2.5 1.9-2.5.9 0 1.3.7 1.3 1.5 0 .9-.6 2.2-.9 3.5-.2 1 .5 1.8 1.5 1.8 1.8 0 3.1-2.4 3.1-5 0-2-1.4-3.7-3.9-3.7a4.2 4.2 0 0 0-4.4 4.2c0 .8.3 1.4.6 1.8.1.1.1.2.1.4l-.3 1.2c0 .2-.2.3-.4.2-1.1-.5-1.8-2.1-1.8-3.4 0-2.8 2-5.3 5.9-5.3 3.1 0 5.5 2.2 5.5 5.2 0 3.1-1.9 5.5-4.7 5.5-.9 0-1.8-.5-2.1-1l-.6 2.2c-.2.8-.8 1.9-1.2 2.5A10 10 0 1 0 12 2Z"/>');
 
     return '' +
       '<footer class="site-footer"><div class="wrap">' +
